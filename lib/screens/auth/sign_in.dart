@@ -72,8 +72,8 @@ class _SignInState extends State<SignIn> {
                     SizedBox(height: screenHeight * 0.04),
                     CustomTextFormField(
                       controller: _emailController,
-                      labelText: 'Email',
-                      hintText: 'Enter your email',
+                      labelText: 'Username',
+                      hintText: 'Enter your username',
                       keyboardType: TextInputType.visiblePassword,
                       validator: (value) {
                         if (value == null || value.isEmpty) {

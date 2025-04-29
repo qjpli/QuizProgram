@@ -14,7 +14,7 @@ class SignUp1 extends StatefulWidget {
 }
 
 class _SignUp1State extends State<SignUp1> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
@@ -68,9 +68,9 @@ class _SignUp1State extends State<SignUp1> {
                 children: [
                   SizedBox(height: screenHeight * 0.04),
                   CustomTextFormField(
-                    controller: _emailController,
-                    labelText: 'Email',
-                    hintText: 'Enter your email',
+                    controller: _usernameController,
+                    labelText: 'Username',
+                    hintText: 'Enter your username',
                     keyboardType: TextInputType.visiblePassword,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
