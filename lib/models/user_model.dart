@@ -11,16 +11,12 @@ class UserModel {
   final String id;
   final String name;
   final String email;
-  final String? profilePicture;
-  final String? bio;
   final DateTime? createdAt;
 
   const UserModel({
     required this.id,
     required this.name,
     required this.email,
-    this.profilePicture, // Optional
-    this.bio, // Optional
     this.createdAt, // Optional
   });
 
