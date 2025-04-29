@@ -40,6 +40,7 @@ dependencies:
   flutter_native_splash: any
   uuid: any
   path: any
+  shared_preferences: any
 
 flutter_native_splash:
   color: "#b2fce5"

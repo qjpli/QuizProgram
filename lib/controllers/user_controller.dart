@@ -1,4 +1,4 @@
-// qjpli-quizprogram/lib/controllers/user_controller.dart
+// lib/controllers/user_controller.dart
 import 'package:quizprogram/models/user_model.dart';
 import 'package:quizprogram/controllers/sql_controller.dart';
 import 'package:sqflite/sqflite.dart';
@@ -20,7 +20,6 @@ class UserController {
     final Database db = await _sqlController.database;
     List<Map<String, dynamic>> maps = await db.query(
       'users',
-      columns: null,
       where: '${UserFields.id} = ?',
       whereArgs: [id],
     );
@@ -30,10 +29,15 @@ class UserController {
     return null;
   }
 
+  Future<List<UserModel>> getAllUsers() async {
+    final Database db = await _sqlController.database;
+    final List<Map<String, dynamic>> maps = await db.query('users');
+    return maps.map((map) => UserModel.fromMap(map)).toList();
+  }
+
   Future<int> updateUser(UserModel user) async {
     final Database db = await _sqlController.database;
-
-    return db.update(
+    return await db.update(
       'users',
       user.toMap(),
       where: '${UserFields.id} = ?',
@@ -48,5 +52,18 @@ class UserController {
       where: '${UserFields.id} = ?',
       whereArgs: [id],
     );
+  }
+
+  Future<UserModel?> authenticateUser(String username, String password) async {
+    final Database db = await _sqlController.database;
+    List<Map<String, dynamic>> maps = await db.query(
+      'users',
+      where: '${UserFields.username} = ? AND ${UserFields.password} = ?',
+      whereArgs: [username, password],
+    );
+    if (maps.isNotEmpty) {
+      return UserModel.fromMap(maps.first);
+    }
+    return null;
   }
 }
