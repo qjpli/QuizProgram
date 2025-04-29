@@ -1,5 +1,7 @@
+// qjpli-quizprogram/lib/controllers/sql_controller.dart
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:quizprogram/models/user_model.dart';
 
 class SQLController {
   Database? _db;
@@ -20,6 +22,14 @@ class SQLController {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-
+    await db.execute('''
+      CREATE TABLE users (
+        ${UserFields.id} TEXT PRIMARY KEY,
+        ${UserFields.name} TEXT NOT NULL,
+        ${UserFields.username} TEXT NOT NULL,
+        ${UserFields.password} TEXT NOT NULL,
+        ${UserFields.createdAt} TEXT
+      )
+      ''');
   }
 }
