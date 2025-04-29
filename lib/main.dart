@@ -2,9 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:quizprogram/providers/theme_provider.dart';
 import 'package:quizprogram/controllers/sql_controller.dart';
+import 'package:quizprogram/screens/hub.dart';
 
 import 'globals.dart' as globals; // Import SQLController
 
@@ -40,9 +42,10 @@ class MyApp extends StatelessWidget {
     globals.screenWidth = MediaQuery.of(context).size.width;
     globals.screenSize = globals.screenHeight + globals.screenWidth;
 
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Quiz App',
       themeMode: themeProvider.themeMode,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorSchemeSeed: Colors.indigo,
         useMaterial3: true,
@@ -53,29 +56,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         useMaterial3: true,
       ),
-      home: HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Quiz Program'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.brightness_6),
-            onPressed: () {
-              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: Text('Quiz App Home Page'),
-      ),
+      home: const Hub()
     );
   }
 }
