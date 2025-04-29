@@ -44,8 +44,10 @@ flutter_native_splash:
   android: true
   ios: true
   android_12:
-    image: ""
-  image_ios: ""
+    image: "assets/images/general/app-logo-1.png"
+    color_dark: "#b2fce5"
+    image_dark: "assets/images/general/app-logo-1.png"
+  image_ios: "assets/images/general/app-logo-1.png"
 
 dev_dependencies:
   flutter_test:
