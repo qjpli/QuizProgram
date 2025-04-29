@@ -1,10 +1,23 @@
 // qjpli-quizprogram/lib/main.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:quizprogram/providers/theme_provider.dart';
-import 'package:quizprogram/controllers/sql_controller.dart'; // Import SQLController
+import 'package:quizprogram/controllers/sql_controller.dart';
+
+import 'globals.dart' as globals; // Import SQLController
 
 void main() {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   runApp(
     MultiProvider(
       providers: [
@@ -22,6 +35,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+
+    globals.screenHeight = MediaQuery.of(context).size.height;
+    globals.screenWidth = MediaQuery.of(context).size.width;
+    globals.screenSize = globals.screenHeight + globals.screenWidth;
+
     return MaterialApp(
       title: 'Quiz App',
       themeMode: themeProvider.themeMode,
