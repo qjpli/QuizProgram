@@ -118,6 +118,8 @@ flutter:
           weight: 900
           style: italic
 
+  assets:
+    - assets/images/general/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
