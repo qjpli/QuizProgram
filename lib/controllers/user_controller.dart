@@ -1,4 +1,3 @@
-// lib/controllers/user_controller.dart
 import 'package:quizprogram/models/user_model.dart';
 import 'package:quizprogram/controllers/sql_controller.dart';
 import 'package:sqflite/sqflite.dart';

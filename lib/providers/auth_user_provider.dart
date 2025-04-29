@@ -1,4 +1,4 @@
-// lib/providers/auth_user_provider.dart
+// THIS PROVIDER IS FOR LOGGED IN USER
 import 'package:flutter/material.dart';
 import 'package:quizprogram/models/user_model.dart';
 import 'package:quizprogram/controllers/user_controller.dart';
@@ -20,7 +20,7 @@ class AuthUserProvider extends ChangeNotifier {
     String? userId = prefs.getString('logged_in_user_id');
     if (userId != null) {
       await getAuthUser(userId);
-    } 
+    }
   }
 
   Future<void> setAuthUser(UserModel user) async {

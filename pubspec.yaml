@@ -73,6 +73,51 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  
+  fonts:
+    - family: HelveticaNeue
+      fonts:
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueUltraLight.otf
+          weight: 100
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueUltraLightItalic.otf
+          weight: 100
+          style: italic
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueThin.otf
+          weight: 200
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueThinItalic.otf
+          weight: 200
+          style: italic
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueLight.otf
+          weight: 300
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueLightItalic.otf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueRoman.otf
+          weight: 400
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueItalic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueMedium.otf
+          weight: 500
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueMediumItalic.otf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueBold.otf
+          weight: 700
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueBoldItalic.otf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueHeavy.otf
+          weight: 800
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueHeavyItalic.otf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueBlack.otf
+          weight: 900
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeueBlackItalic.otf
+          weight: 900
+          style: italic
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:

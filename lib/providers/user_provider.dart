@@ -1,4 +1,4 @@
-// lib/providers/user_provider.dart
+// THIS PROVIDER HANDLES THE OVERALL USERS
 import 'package:flutter/material.dart';
 import 'package:quizprogram/models/user_model.dart';
 import 'package:quizprogram/controllers/user_controller.dart';
@@ -26,16 +26,14 @@ class UserProvider extends ChangeNotifier {
     );
 
     await _userController.insertUser(newUser);
-    _users.add(newUser); //optimistic update
+    _users.add(newUser);
     notifyListeners();
   }
 
   Future<void> fetchUsers() async {
-    // Assuming you have a method in UserController to get all users
-    // _users = await _userController.getAllUsers();
-    //  notifyListeners();
+    _users = await _userController.getAllUsers();
+     notifyListeners();
   }
 
-// Other methods for managing all users (if needed)
 }
 

@@ -4,8 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:quizprogram/providers/auth_user_provider.dart';
 import 'package:quizprogram/providers/theme_provider.dart';
 import 'package:quizprogram/controllers/sql_controller.dart';
+import 'package:quizprogram/providers/user_provider.dart';
+import 'package:quizprogram/screens/auth/sign_in.dart';
 import 'package:quizprogram/screens/hub.dart';
 
 import 'globals.dart' as globals; // Import SQLController
@@ -24,7 +27,8 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        Provider(create: (_) => SQLController()), // Provide SQLController
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => AuthUserProvider())
       ],
       child: const MyApp(),
     ),
@@ -37,6 +41,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final authUserProvider = Provider.of<AuthUserProvider>(context);
 
     globals.screenHeight = MediaQuery.of(context).size.height;
     globals.screenWidth = MediaQuery.of(context).size.width;
@@ -46,17 +51,8 @@ class MyApp extends StatelessWidget {
       title: 'Quiz App',
       themeMode: themeProvider.themeMode,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorSchemeSeed: Colors.indigo,
-        useMaterial3: true,
-        brightness: Brightness.light,
-      ),
-      darkTheme: ThemeData(
-        colorSchemeSeed: Colors.blue,
-        brightness: Brightness.dark,
-        useMaterial3: true,
-      ),
-      home: const Hub()
+      theme: themeProvider.currentTheme(),
+      home: authUserProvider.authUser == null ? const SignIn() : const Hub(),
     );
   }
 }
