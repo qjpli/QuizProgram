@@ -37,6 +37,7 @@ dependencies:
   get: any
   provider: any
   sqflite: any
+  flutter_native_splash: any
 
 dev_dependencies:
   flutter_test:
