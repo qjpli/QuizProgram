@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:quizprogram/globals.dart';
 import 'package:quizprogram/providers/auth_user_provider.dart';
 import 'package:quizprogram/providers/user_provider.dart';
+import 'package:quizprogram/screens/main/hub.dart';
 
 import '../../customs/fields/custom_text_field.dart';
 
@@ -100,6 +101,13 @@ class _SignUp2State extends State<SignUp2> {
                               final setAuth =
                                   await authUserProvider.setAuthUser(status);
 
+                              if(setAuth) {
+                                Get.offAll(() => const Hub(),
+                                  transition: Transition.rightToLeft,
+                                  duration: const Duration(milliseconds: 300)
+                                );
+                              }
+
                               print('Account Successfully Created');
                             }
                           }
@@ -114,7 +122,8 @@ class _SignUp2State extends State<SignUp2> {
                     child: Text(
                       'Done',
                       style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w600),
+                          color: Colors.white, fontWeight: FontWeight.w600,
+                          fontSize: screenSize * 0.013),
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.07),

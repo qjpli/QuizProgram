@@ -118,7 +118,8 @@ class _SignInState extends State<SignIn> {
                       child: Text('Log in',
                         style: TextStyle(
                           color: Colors.white,
-                          fontWeight: FontWeight.w600
+                          fontWeight: FontWeight.w600,
+                          fontSize: screenSize * 0.013
                         ),
                       ),
                     ),

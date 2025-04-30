@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: 3.5.4
+  sdk: 3.6.1
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -41,6 +41,7 @@ dependencies:
   uuid: any
   path: any
   shared_preferences: any
+  flutter_svg: ^2.1.0
 
 flutter_native_splash:
   color: "#b2fce5"
@@ -121,6 +122,8 @@ flutter:
 
   assets:
     - assets/images/general/
+    - assets/svgs/general/
+    - assets/svgs/categoryicons/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

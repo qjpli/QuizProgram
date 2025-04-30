@@ -14,6 +14,7 @@ class CustomTextFormField extends StatefulWidget {
   final Color? borderColor;
   final Color? iconColor;
   final bool isPassword;
+  final int? maxLines;
   final String? labelText;
   final TextStyle? labelStyle;
   final FocusNode? focusNode; // Added FocusNode
@@ -31,6 +32,7 @@ class CustomTextFormField extends StatefulWidget {
     this.borderColor,
     this.iconColor,
     this.isPassword = false,
+    this.maxLines,
     this.labelText,
     this.labelStyle,
     this.focusNode, // Added FocusNode
@@ -67,6 +69,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       },
       child: TextFormField(
         controller: widget.controller,
+        maxLines: widget.maxLines,
         decoration: InputDecoration(
           hintText: widget.hintText,
           hintStyle: TextStyle(
@@ -80,7 +83,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               : null,
           labelStyle: TextStyle(
               fontWeight: FontWeight.w300,
-              fontSize: screenSize * 0.013
+              fontSize: screenSize * 0.013,
+              color: const Color(0xFF101010)
           ),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           alignLabelWithHint: false,

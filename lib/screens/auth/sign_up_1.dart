@@ -137,7 +137,8 @@ class _SignUp1State extends State<SignUp1> {
                     child: Text(
                       'Sign up',
                       style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w600),
+                          color: Colors.white, fontWeight: FontWeight.w600,
+                          fontSize: screenSize * 0.013),
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.07),
