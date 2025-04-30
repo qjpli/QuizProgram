@@ -97,6 +97,8 @@ class _SignUp2State extends State<SignUp2> {
                                 password: widget.password);
 
                             if (status != null) {
+                              await userProvider.fetchUsers();
+
                               final setAuth =
                                   await authUserProvider.setAuthUser(status);
 

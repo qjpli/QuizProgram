@@ -44,6 +44,8 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future<bool> isUserExisting(String username) async {
+    await fetchUsers();
+
     bool notExisting = false;
 
     if (_users.any((element) =>
