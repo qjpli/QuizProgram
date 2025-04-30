@@ -23,11 +23,17 @@ class AuthUserProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> setAuthUser(UserModel user) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('logged_in_user_id', user.id);
-    _authUser = user;
-    notifyListeners();
+  Future<bool> setAuthUser(UserModel user) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('logged_in_user_id', user.id);
+      _authUser = user;
+      notifyListeners();
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<void> removeAuthUser() async {
@@ -56,7 +62,8 @@ class AuthUserProvider extends ChangeNotifier {
   }
 
   Future<void> loginUser(String username, String password) async {
-    UserModel? user = await _userController.authenticateUser(username, password);
+    UserModel? user =
+        await _userController.authenticateUser(username, password);
 
     if (user != null) {
       await setAuthUser(user);

@@ -12,28 +12,45 @@ class UserProvider extends ChangeNotifier {
 
   List<UserModel> get users => _users;
 
-  Future<void> createUser({
+  Future<UserModel?> createUser({
     required String name,
     required String username,
     required String password,
   }) async {
-    final id = _uuid.v4();
-    final newUser = UserModel(
-      id: id,
-      name: name,
-      username: username,
-      password: password,
-    );
+    try {
+      final id = _uuid.v4();
+      final newUser = UserModel(
+        id: id,
+        name: name,
+        username: username,
+        password: password,
+      );
 
-    await _userController.insertUser(newUser);
-    _users.add(newUser);
-    notifyListeners();
+      await _userController.insertUser(newUser);
+      _users.add(newUser);
+      notifyListeners();
+
+      return newUser;
+    } catch (e) {
+      print('Error encountered while creating: $e');
+
+      return null;
+    }
   }
 
   Future<void> fetchUsers() async {
     _users = await _userController.getAllUsers();
-     notifyListeners();
+    notifyListeners();
   }
 
-}
+  Future<bool> isUserExisting(String username) async {
+    bool notExisting = false;
 
+    if (_users.any((element) =>
+        element.username.toLowerCase() == username.trim().toLowerCase())) {
+      notExisting = true;
+    }
+
+    return notExisting;
+  }
+}

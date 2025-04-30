@@ -28,7 +28,8 @@ class SQLController {
         ${UserFields.name} TEXT NOT NULL,
         ${UserFields.username} TEXT NOT NULL,
         ${UserFields.password} TEXT NOT NULL,
-        ${UserFields.createdAt} TEXT
+        ${UserFields.createdAt} TEXT,
+        ${UserFields.updatedAt} TEXT
       )
       ''');
   }

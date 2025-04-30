@@ -6,6 +6,7 @@ class UserFields {
   static const String username = 'username';
   static const String password = 'password';
   static const String createdAt = 'created_at';
+  static const String updatedAt = 'updated_at';
 }
 
 class UserModel {
@@ -14,14 +15,15 @@ class UserModel {
   final String username;
   final String password;
   final DateTime? createdAt;
+  final DateTime? updatedAt;
 
-  const UserModel({
-    required this.id,
-    required this.name,
-    required this.username,
-    required this.password,
-    this.createdAt,
-  });
+  const UserModel(
+      {required this.id,
+      required this.name,
+      required this.username,
+      required this.password,
+      this.createdAt,
+      this.updatedAt});
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
@@ -31,6 +33,9 @@ class UserModel {
       password: map[UserFields.password] as String? ?? '',
       createdAt: map[UserFields.createdAt] != null
           ? DateTime.tryParse(map[UserFields.createdAt])
+          : null,
+      updatedAt: map[UserFields.updatedAt] != null
+          ? DateTime.tryParse(map[UserFields.updatedAt])
           : null,
     );
   }
@@ -42,6 +47,7 @@ class UserModel {
       UserFields.username: username,
       UserFields.password: password,
       UserFields.createdAt: createdAt?.toIso8601String(),
+      UserFields.updatedAt: updatedAt?.toIso8601String()
     };
   }
 
