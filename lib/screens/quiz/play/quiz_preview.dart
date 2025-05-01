@@ -322,7 +322,29 @@ class _QuizPreviewState extends State<QuizPreview> {
                             ),
                           ],
                         ),
-                        Container(),
+                        Container(
+                          child: ListView.builder(
+                            itemCount: 1,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)
+                                ),
+                                margin: EdgeInsets.only(
+                                  bottom: screenHeight * 0.015
+                                ),
+                                child: Row(
+                                  children: [
+
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                         SizedBox(height: screenHeight * 0.15),
                       ],
                     ),
