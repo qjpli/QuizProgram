@@ -62,6 +62,8 @@ class UserController {
     );
     if (maps.isNotEmpty) {
       return UserModel.fromMap(maps.first);
+    } else {
+      print('Empty');
     }
     return null;
   }

@@ -140,9 +140,8 @@ class _CreateQuiz3State extends State<CreateQuiz3> {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () {
-            // Finalize the quiz (this might trigger your saving logic)
             createQuizProvider.finalizeQuiz();
-            Navigator.pop(context); // Close the review page after finalizing
+            Navigator.pop(context);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF313235),

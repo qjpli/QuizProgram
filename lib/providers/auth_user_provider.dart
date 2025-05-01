@@ -62,11 +62,13 @@ class AuthUserProvider extends ChangeNotifier {
   }
 
   Future<void> loginUser(String username, String password) async {
-    UserModel? user =
-        await _userController.authenticateUser(username, password);
+    UserModel? user = await _userController.authenticateUser(username, password);
 
     if (user != null) {
       await setAuthUser(user);
+
+
+      print('Set');
     } else {
       print('Login failed');
     }

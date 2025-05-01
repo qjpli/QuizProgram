@@ -53,9 +53,9 @@ class QuizModel {
       description: map[QuizFields.description] ?? '',
       difficulty: map[QuizFields.difficulty] ?? '',
       totalTakers: map[QuizFields.totalTakers] ?? 0,
-      isAvailable: map[QuizFields.isAvailable] ?? false,
+      isAvailable: map[QuizFields.isAvailable] == '1' ? true : false,
       maxTimePerQuestion: map[QuizFields.maxTimePerQuestion] ?? 0,
-      randomizeQuestion: map[QuizFields.randomizeQuestion] ?? false,
+      randomizeQuestion: map[QuizFields.randomizeQuestion] == '1' ? true : false,
       createdAt: map[QuizFields.createdAt] != null
           ? DateTime.tryParse(map[QuizFields.createdAt])
           : null,
@@ -73,9 +73,9 @@ class QuizModel {
     QuizFields.description: description,
     QuizFields.difficulty: difficulty,
     QuizFields.totalTakers: totalTakers,
-    QuizFields.isAvailable: isAvailable,
+    QuizFields.isAvailable: isAvailable == true ? 1 : 0,
     QuizFields.maxTimePerQuestion: maxTimePerQuestion,
-    QuizFields.randomizeQuestion: randomizeQuestion,
+    QuizFields.randomizeQuestion: randomizeQuestion == true ? 1 : 0,
     QuizFields.createdAt: createdAt?.toIso8601String(),
     QuizFields.updatedAt: updatedAt?.toIso8601String(),
   };

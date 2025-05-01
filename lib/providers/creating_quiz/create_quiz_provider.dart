@@ -7,6 +7,10 @@ import 'package:quizprogram/models/quiz_question_model.dart';
 import 'package:quizprogram/providers/auth_user_provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../controllers/quiz_controller.dart';
+import '../../controllers/quiz_question_choice_controller.dart';
+import '../../controllers/quiz_question_controller.dart';
+
 class CreateQuizProvider with ChangeNotifier {
   QuizModel? _quiz;
   final List<QuizQuestionModel> _questions = [];
@@ -159,11 +163,42 @@ class CreateQuizProvider with ChangeNotifier {
     _quiz = null;
     _questions.clear();
     _choices.clear();
+    _correctChoices.clear();
     notifyListeners();
   }
 
-  void finalizeQuiz() {
-    print("Quiz finalized: ${_quiz?.name}");
-    resetQuiz();
+  Future<void> finalizeQuiz() async {
+    final QuizController quizController = QuizController();
+    final QuizQuestionController quizQuestionController = QuizQuestionController();
+    final QuizQuestionChoiceController quizQuestionChoiceController = QuizQuestionChoiceController();
+
+    if (_quiz == null) {
+      print('Quiz metadata not set.');
+      return;
+    }
+
+    try {
+      // 1. Save the Quiz
+      await quizController.insertQuiz(_quiz!);
+
+      // 2. Save Questions and Choices
+      for (final question in _questions) {
+        await quizQuestionController.insertQuizQuestion(question);
+        final questionChoices = _choices.where((c) => c.quizQuestionId == question.id);
+
+        for (final choice in questionChoices) {
+          await quizQuestionChoiceController.insertQuizQuestionChoice(choice);
+        }
+      }
+
+      print('Quiz finalized and saved to database.');
+      resetQuiz();
+
+    } catch (e) {
+      print('Error saving quiz: $e');
+      //Handle error appropriately, maybe show a snackbar
+    }
+
+    notifyListeners();
   }
 }
