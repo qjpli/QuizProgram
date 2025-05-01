@@ -20,6 +20,14 @@ class _SignUp1State extends State<SignUp1> {
   final TextEditingController _passwordController = TextEditingController();
 
   @override
+  void dispose() {
+    super.dispose();
+
+    _usernameController.dispose();
+    _passwordController.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
 

@@ -6,7 +6,7 @@ import 'package:quizprogram/globals.dart';
 import 'package:quizprogram/screens/main/category.dart';
 import 'package:quizprogram/screens/main/home.dart';
 import 'package:quizprogram/screens/main/profile.dart';
-import 'package:quizprogram/screens/quiz/create/create_quiz.dart';
+import 'package:quizprogram/screens/quiz/create/create_quiz_1.dart';
 
 class Hub extends StatefulWidget {
   const Hub({super.key});

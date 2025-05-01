@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:quizprogram/customs/fields/custom_text_field.dart';
 import 'package:quizprogram/globals.dart';
@@ -22,6 +23,14 @@ class _CreateQuizState extends State<CreateQuiz> {
 
   @override
   Widget build(BuildContext context) {
+
+    bool isAllowed =
+        _quizNameController.text.trim().isNotEmpty &&
+        _quizDescController.text.trim().isNotEmpty &&
+        selectedCategory.isNotEmpty &&
+        _quizQuestionsNoController.text.trim().isNotEmpty &&
+        _quizTimePerQuestionController.text.trim().isNotEmpty;
+
     final quizCategoryProvider = Provider.of<QuizCategoryProvider>(context);
     return Scaffold(
       appBar: AppBar(
@@ -62,6 +71,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                       CustomTextFormField(
                         controller: _quizNameController,
                         hintText: 'Enter the name of the Quiz',
+                        onChanged: (val) => setState(() {}),
                       ),
                       SizedBox(height: screenHeight * 0.03),
                       Padding(
@@ -78,6 +88,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                         controller: _quizDescController,
                         hintText: 'Write the Quiz Description',
                         maxLines: 4,
+                        onChanged: (val) => setState(() {}),
                       ),
                       SizedBox(height: screenHeight * 0.03),
                     ],
@@ -159,6 +170,8 @@ class _CreateQuizState extends State<CreateQuiz> {
                       CustomTextFormField(
                         controller: _quizQuestionsNoController,
                         hintText: 'Enter number of Questions',
+                        keyboardType: TextInputType.number,
+                        onChanged: (val) => setState(() {}),
                       ),
                     ],
                   ),
@@ -184,6 +197,8 @@ class _CreateQuizState extends State<CreateQuiz> {
                       CustomTextFormField(
                         controller: _quizTimePerQuestionController,
                         hintText: 'Enter time per question',
+                        keyboardType: TextInputType.number,
+                        onChanged: (val) => setState(() {}),
                       ),
                     ],
                   ),
@@ -196,9 +211,9 @@ class _CreateQuizState extends State<CreateQuiz> {
             left: screenWidth * 0.06,
             right: screenWidth * 0.06,
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: isAllowed ? () {
 
-              },
+              } : null,
               style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF313235),
                   shape: RoundedRectangleBorder(

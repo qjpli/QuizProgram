@@ -24,6 +24,13 @@ class _SignUp2State extends State<SignUp2> {
   final TextEditingController _nameController = TextEditingController();
 
   @override
+  void dispose() {
+    super.dispose();
+
+    _nameController.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
 
