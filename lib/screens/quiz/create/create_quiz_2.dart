@@ -103,6 +103,7 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
+
                       if (_currentPage < widget.noOfQuestions - 1) {
                         _pageController.nextPage(
                           duration: Duration(milliseconds: 300),
@@ -159,7 +160,7 @@ class QuestionInput extends StatefulWidget {
 class _QuestionInputState extends State<QuestionInput> {
   late TextEditingController _questionController;
   List<QuizQuestionChoiceModel> choices = [];
-  List<TextEditingController> _choiceControllers = [];
+  final List<TextEditingController> _choiceControllers = [];
   int? _selectedChoiceIndex;
 
   @override
