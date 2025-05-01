@@ -207,6 +207,34 @@ class _CreateQuizState extends State<CreateQuiz> {
                     ],
                   ),
                 ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.06
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: screenHeight * 0.035),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: screenWidth * 0.02
+                        ),
+                        child: Text('Timer per Question',
+                          style: TextStyle(
+
+                          ),
+                        ),
+                      ),
+                      CustomTextFormField(
+                        controller: _quizTimePerQuestionController,
+                        hintText: 'Enter time per question',
+                        keyboardType: TextInputType.number,
+                        onChanged: (val) => setState(() {}),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: screenHeight * 0.15)
               ],
             ),
           ),
@@ -217,6 +245,8 @@ class _CreateQuizState extends State<CreateQuiz> {
             child: ElevatedButton(
               onPressed: isAllowed ? () {
 
+                createQuizProvider.resetQuiz();
+
                 createQuizProvider.setQuizMetadata(
                     quizCategoryId: selectedCategory,
                     name: _quizNameController.text.trim(),
@@ -226,13 +256,8 @@ class _CreateQuizState extends State<CreateQuiz> {
                     randomizeQuestion: false
                 );
 
-                Get.to(() => CreateQuiz2(
-                    name: _quizNameController.text.trim(),
-                    description: _quizDescController.text.trim(),
-                    type: selectedCategory,
-                    noOfQuestions: int.tryParse(_quizQuestionsNoController.text.trim()) ?? 1,
-                    timePerQuestion: int.tryParse(_quizTimePerQuestionController.text.trim()) ?? 60
-                )
+                  Get.to(() => CreateQuiz2(
+                      noOfQuestions: int.tryParse(_quizQuestionsNoController.text.trim()) ?? 0)
                 );
               } : null,
               style: ElevatedButton.styleFrom(

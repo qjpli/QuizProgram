@@ -97,6 +97,7 @@ class _SignInState extends State<SignIn> {
                       hintText: 'Enter your password',
                       keyboardType: TextInputType.visiblePassword,
                       obscureText: true,
+                      maxLines: 1,
                       onChanged: (value) {
         
                       },
