@@ -8,6 +8,15 @@ class QuizQuestionChoiceProvider extends ChangeNotifier {
   List<QuizQuestionChoiceModel> _choices = [];
   List<QuizQuestionChoiceModel> get choices => _choices;
 
+  QuizQuestionChoiceProvider() {
+    fetchAllChoices();
+  }
+
+  Future<void> fetchAllChoices() async {
+    _choices = await _quizQuestionChoiceController.getAllQuizQuestionChoices();
+    notifyListeners();
+  }
+
   // Fetch all choices for a quiz question
   Future<void> fetchChoices(String questionId) async {
     _choices = await _quizQuestionChoiceController.getAllQuizQuestionChoicesForQuestion(questionId);

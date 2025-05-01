@@ -39,6 +39,7 @@ class _QuizPreviewState extends State<QuizPreview> {
     final quizCategory = quizCategoryProvider.quizCategories.firstWhere((quizCategory) => quizCategory.id == quiz.quizCategoryId);
     Color quizColor = Colors.black;
 
+
     switch (quizCategory.svgIcon) {
       case 'art-and-culture':
         quizColor = Colors.blue.shade800;
@@ -164,6 +165,8 @@ class _QuizPreviewState extends State<QuizPreview> {
                         TitleValue(title: 'Difficulty', value: quiz.difficulty),
                         TitleValue(title: 'Total Takers', value: '${quizTakerProvider.quizTakers.where((quizTaker) => quizTaker.quizId == quiz.id).length}'),
                         TitleValue(title: 'Highest Score', value: '${quizTakerProvider.quizTakers.firstWhereOrNull((quizTaker) => quizTaker.quizId == quiz.id)?.points ?? 0}'),
+                        TitleValue(title: 'Randomized Questions', value: quiz.randomizeQuestion ? 'Yes' : 'No'),
+                        TitleValue(title: 'Time per Questions', value: '${quiz.maxTimePerQuestion} secs'),
                       ],
                     ),
                   )

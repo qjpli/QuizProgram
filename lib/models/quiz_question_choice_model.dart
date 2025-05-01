@@ -49,7 +49,7 @@ class QuizQuestionChoiceModel {
       id: map[QuizQuestionChoiceFields.id] ?? '',
       quizQuestionId: map[QuizQuestionChoiceFields.quizQuestionId] ?? '',
       value: map[QuizQuestionChoiceFields.value] ?? '',
-      isCorrect: map[QuizQuestionChoiceFields.isCorrect] == '1' ? true : false,
+      isCorrect: map[QuizQuestionChoiceFields.isCorrect] == 1 ? true : false,
       createdAt: map[QuizQuestionChoiceFields.createdAt] != null
           ? DateTime.tryParse(map[QuizQuestionChoiceFields.createdAt])
           : null,

@@ -53,9 +53,9 @@ class QuizModel {
       description: map[QuizFields.description] ?? '',
       difficulty: map[QuizFields.difficulty] ?? '',
       totalTakers: map[QuizFields.totalTakers] ?? 0,
-      isAvailable: map[QuizFields.isAvailable] == '1' ? true : false,
+      isAvailable: map[QuizFields.isAvailable] == 1 ? true : false,
       maxTimePerQuestion: map[QuizFields.maxTimePerQuestion] ?? 0,
-      randomizeQuestion: map[QuizFields.randomizeQuestion] == '1' ? true : false,
+      randomizeQuestion: map[QuizFields.randomizeQuestion] == 1 ? true : false,
       createdAt: map[QuizFields.createdAt] != null
           ? DateTime.tryParse(map[QuizFields.createdAt])
           : null,
