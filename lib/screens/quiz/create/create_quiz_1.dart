@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:quizprogram/customs/fields/custom_text_field.dart';
 import 'package:quizprogram/globals.dart';
 import 'package:quizprogram/providers/quiz_category_provider.dart';
+import 'package:quizprogram/screens/quiz/create/create_quiz_2.dart';
 
 class CreateQuiz extends StatefulWidget {
   const CreateQuiz({super.key});
@@ -212,7 +213,14 @@ class _CreateQuizState extends State<CreateQuiz> {
             right: screenWidth * 0.06,
             child: ElevatedButton(
               onPressed: isAllowed ? () {
-
+                Get.to(() => CreateQuiz2(
+                    name: _quizNameController.text.trim(),
+                    description: _quizDescController.text.trim(),
+                    type: selectedCategory,
+                    noOfQuestions: int.tryParse(_quizQuestionsNoController.text.trim()) ?? 1,
+                    timePerQuestion: int.tryParse(_quizTimePerQuestionController.text.trim()) ?? 60
+                )
+                );
               } : null,
               style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF313235),

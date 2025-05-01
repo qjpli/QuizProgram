@@ -26,6 +26,24 @@ class QuizQuestionChoiceModel {
     this.updatedAt,
   });
 
+  QuizQuestionChoiceModel copyWith({
+    String? id,
+    String? quizQuestionId,
+    String? value,
+    bool? isCorrect,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return QuizQuestionChoiceModel(
+      id: id ?? this.id,
+      quizQuestionId: quizQuestionId ?? this.quizQuestionId,
+      value: value ?? this.value,
+      isCorrect: isCorrect ?? this.isCorrect,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
   factory QuizQuestionChoiceModel.fromMap(Map<String, dynamic> map) {
     return QuizQuestionChoiceModel(
       id: map[QuizQuestionChoiceFields.id] ?? '',
@@ -45,7 +63,7 @@ class QuizQuestionChoiceModel {
     QuizQuestionChoiceFields.id: id,
     QuizQuestionChoiceFields.quizQuestionId: quizQuestionId,
     QuizQuestionChoiceFields.value: value,
-    QuizQuestionChoiceFields.isCorrect: isCorrect,
+    QuizQuestionChoiceFields.isCorrect: isCorrect == true ? 1 : 0,
     QuizQuestionChoiceFields.createdAt: createdAt?.toIso8601String(),
     QuizQuestionChoiceFields.updatedAt: updatedAt?.toIso8601String(),
   };
