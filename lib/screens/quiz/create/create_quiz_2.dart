@@ -28,11 +28,19 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
   List<QuizQuestionModel> questions = [];
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  List<bool> isPageValid = [];
 
   @override
   void initState() {
     super.initState();
     questions = List.generate(widget.noOfQuestions, (i) => QuizQuestionModel(id: '', quizId: '', question: ''));
+    isPageValid = List.filled(widget.noOfQuestions, false);
+  }
+
+  void updatePageValidity(int pageIndex, bool isValid) {
+    setState(() {
+      isPageValid[pageIndex] = isValid;
+    });
   }
 
   @override
@@ -53,16 +61,17 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
               controller: _pageController,
               physics: NeverScrollableScrollPhysics(),
               itemCount: widget.noOfQuestions,
-              itemBuilder: (context, index) {
-                return QuestionInput(
-                  questionNumber: index + 1,
-                  question: questions[index],
-                );
-              },
               onPageChanged: (index) {
                 setState(() {
                   _currentPage = index;
                 });
+              },
+              itemBuilder: (context, index) {
+                return QuestionInput(
+                  questionNumber: index + 1,
+                  question: questions[index],
+                  onValidationChanged: (isValid) => updatePageValidity(index, isValid),
+                );
               },
             ),
           ),
@@ -70,7 +79,7 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
             padding: EdgeInsets.only(
               bottom: screenHeight * 0.06,
               left: screenWidth * 0.05,
-              right: screenWidth * 0.05
+              right: screenWidth * 0.05,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -83,27 +92,26 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
                         duration: Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
                       );
-                    } : null,
+                    }
+                        : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF313235),
-                      padding: EdgeInsets.symmetric(
-                        vertical: screenHeight * 0.013
-                      )
-                    ),
-                    child: Text("Previous",
+                        backgroundColor: const Color(0xFF313235),
+                        padding: EdgeInsets.symmetric(
+                            vertical: screenHeight * 0.013)),
+                    child: Text(
+                      "Previous",
                       style: TextStyle(
-                        fontSize: screenSize * 0.013,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black
-                      ),
+                          fontSize: screenSize * 0.013,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white),
                     ),
                   ),
                 ),
                 SizedBox(width: screenWidth * 0.03),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-
+                    onPressed: isPageValid[_currentPage]
+                        ? () {
                       if (_currentPage < widget.noOfQuestions - 1) {
                         _pageController.nextPage(
                           duration: Duration(milliseconds: 300),
@@ -112,19 +120,18 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
                       } else {
                         // Handle Finish
                       }
-                    },
+                    }
+                        : null,
                     style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF313235),
                         padding: EdgeInsets.symmetric(
-                            vertical: screenHeight * 0.013
-                        )
-                    ),
-                    child: Text("Next",
+                            vertical: screenHeight * 0.013)),
+                    child: Text(
+                      "Next",
                       style: TextStyle(
                           fontSize: screenSize * 0.013,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white
-                      ),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -136,7 +143,6 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
     );
   }
 
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -147,10 +153,13 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
 class QuestionInput extends StatefulWidget {
   final int questionNumber;
   final QuizQuestionModel question;
+  final Function(bool isValid)? onValidationChanged;
+
   const QuestionInput({
     super.key,
     required this.questionNumber,
     required this.question,
+    this.onValidationChanged,
   });
 
   @override
@@ -167,13 +176,17 @@ class _QuestionInputState extends State<QuestionInput> {
   void initState() {
     super.initState();
     _questionController = TextEditingController(text: widget.question.question);
-    addChoice();
+    _questionController.addListener(validate);
+    addChoice(); // Start with one
+    addChoice(); // Ensure at least 2
   }
 
   void addChoice() {
     setState(() {
+      final controller = TextEditingController();
+      controller.addListener(validate);
+      _choiceControllers.add(controller);
       choices.add(QuizQuestionChoiceModel(id: '', quizQuestionId: '', value: '', isCorrect: false));
-      _choiceControllers.add(TextEditingController());
     });
   }
 
@@ -185,8 +198,17 @@ class _QuestionInputState extends State<QuestionInput> {
             (i) => choices[i].copyWith(isCorrect: i == index),
       );
     });
+    validate();
   }
 
+  void validate() {
+    final hasQuestion = _questionController.text.trim().isNotEmpty;
+    final validChoices = _choiceControllers.where((c) => c.text.trim().isNotEmpty).toList();
+    final hasCorrectChoice = choices.any((c) => c.isCorrect);
+
+    final isValid = hasQuestion && validChoices.length >= 2 && hasCorrectChoice;
+    widget.onValidationChanged?.call(isValid);
+  }
   @override
   void dispose() {
     _questionController.dispose();
@@ -248,12 +270,9 @@ class _QuestionInputState extends State<QuestionInput> {
             child: TextButton(
               onPressed: addChoice,
               style: TextButton.styleFrom(
-                backgroundColor: const Color(0xFF313235),
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth * 0.06
-                )
-              ),
+                  backgroundColor: const Color(0xFF313235),
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06)),
               child: Text('Add Choice'),
             ),
           ),
