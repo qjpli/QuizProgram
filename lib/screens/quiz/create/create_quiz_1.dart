@@ -190,7 +190,7 @@ class _CreateQuizState extends State<CreateQuiz> {
                           child: DropdownButton<int>(
                             isExpanded: true,
                             value: selectedDifficulty >= 0 ? selectedDifficulty : null,
-                            hint: Text('Select Difficulty'),
+                            hint: Text('Select Difficulty', style: TextStyle(fontWeight: FontWeight.w300, fontSize: screenSize * 0.013),),
                             items: List.generate(difficulties.length, (index) {
                               return DropdownMenuItem<int>(
                                 value: index,
@@ -313,9 +313,9 @@ class _CreateQuizState extends State<CreateQuiz> {
                     randomizeQuestion: isRandomized
                 );
 
-                  Get.to(() => CreateQuiz2(
-                      noOfQuestions: int.tryParse(_quizQuestionsNoController.text.trim()) ?? 0)
-                );
+                createQuizProvider.setNoOfQuestions(int.tryParse(_quizQuestionsNoController.text.trim()) ?? 0);
+
+                  Get.to(() => const CreateQuiz2());
               } : null,
               style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF313235),

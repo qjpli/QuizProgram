@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:quizprogram/globals.dart';
 import 'package:quizprogram/providers/creating_quiz/create_quiz_provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../main/hub.dart';
 
@@ -18,17 +19,79 @@ class _CreateQuiz3State extends State<CreateQuiz3> {
   Widget build(BuildContext context) {
     final createQuizProvider = Provider.of<CreateQuizProvider>(context);
 
+    bool isQuizValid = createQuizProvider.questions.isNotEmpty &&
+        createQuizProvider.questions.every((question) =>
+        createQuizProvider.choices.where((c) => c.quizQuestionId == question.id).length >= 2 &&
+            createQuizProvider.choices.where((c) => c.quizQuestionId == question.id).any((choice) => choice.isCorrect) && question.question.isNotEmpty);
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Review Your Quiz'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              createQuizProvider.setNoOfQuestions(createQuizProvider.noOfQuestions + 1);
+
+              final String id = Uuid().v4();
+              createQuizProvider.addQuestion(
+                questionId: id,
+                questionText: '',
+              );
+              createQuizProvider.addQuestionController();
+            },
+            icon: Icon(Icons.add),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView.builder(
           itemCount: createQuizProvider.questions.length,
           itemBuilder: (context, index) {
+
             final question = createQuizProvider.questions[index];
+
             final choicesForQuestion = createQuizProvider.choices.where((choice) => choice.quizQuestionId == question.id).toList();
+            if(choicesForQuestion.firstWhereOrNull((choice) => choice.isCorrect) == null) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: screenHeight * 0.024,
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      'No details available for this question yet.',
+                      style: TextStyle(
+                        fontSize: screenSize * 0.013,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Get.back(
+                          result: {
+                            'for': 'edit',
+                            'questionId': question.id,
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF313235),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text('Add Details'),
+                    ),
+                  ],
+                )
+              );
+            }
+
             final correctChoicesForQuestion = choicesForQuestion.where((choice) => choice.isCorrect).first;
 
             return InkWell(
@@ -141,11 +204,11 @@ class _CreateQuiz3State extends State<CreateQuiz3> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
-          onPressed: () async {
+          onPressed: isQuizValid ? () async {
             await createQuizProvider.finalizeQuiz();
 
             Get.offAll(() => const Hub());
-          },
+          } : null,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF313235),
             foregroundColor: Colors.white,

@@ -17,10 +17,26 @@ class CreateQuizProvider with ChangeNotifier {
   final List<QuizQuestionModel> _questions = [];
   final List<QuizQuestionChoiceModel> _choices = [];
   Map<String, String?> _correctChoices = {};
+  int _noOfQuestions = 0;
+  final List<TextEditingController> _questionControllers = [];
+
 
   QuizModel? get quiz => _quiz;
   List<QuizQuestionModel> get questions => _questions;
   List<QuizQuestionChoiceModel> get choices => _choices;
+  int get noOfQuestions => _noOfQuestions;
+  List<TextEditingController> get questionControllers => _questionControllers;
+
+  void setNoOfQuestions(int noOfQuestions) {
+    _noOfQuestions = noOfQuestions;
+    notifyListeners();
+  }
+
+  void addQuestionController() {
+    _questionControllers.add(TextEditingController());
+
+    notifyListeners();
+  }
 
   String? getSelectedChoiceId(String questionId) {
     return _correctChoices[questionId];
@@ -28,23 +44,17 @@ class CreateQuizProvider with ChangeNotifier {
 
   void setCorrectChoice(String questionId, String? choiceId) {
     final previousCorrectChoiceId = _correctChoices[questionId];
-
     if (previousCorrectChoiceId != null) {
       final previousIndex = _choices.indexWhere((c) => c.id == previousCorrectChoiceId);
-
       if (previousIndex != -1) {
         _choices[previousIndex] = _choices[previousIndex].copyWith(isCorrect: false);
       }
     }
-
     _correctChoices[questionId] = choiceId;
-
     final index = _choices.indexWhere((c) => c.id == choiceId);
-
     if (index != -1) {
       _choices[index] = _choices[index].copyWith(isCorrect: true);
     }
-
     notifyListeners();
   }
 
@@ -57,7 +67,6 @@ class CreateQuizProvider with ChangeNotifier {
     required bool randomizeQuestion,
   }) {
     final authUserProvider = Provider.of<AuthUserProvider>(Get.context as BuildContext, listen: false);
-
     _quiz = QuizModel(
       id: Uuid().v4(),
       quizCategoryId: quizCategoryId,
@@ -73,6 +82,29 @@ class CreateQuizProvider with ChangeNotifier {
       updatedAt: DateTime.now(),
     );
     notifyListeners();
+  }
+
+  void updateQuizMetadata({
+    String? name,
+    String? description,
+    String? difficulty,
+    int? maxTimePerQuestion,
+    int? noOfQuestions,
+    bool? randomizeQuestion,
+    bool? isAvailable,
+  }) {
+    if (_quiz != null) {
+      _quiz = _quiz!.copyWith(
+        name: name ?? _quiz!.name,
+        description: description ?? _quiz!.description,
+        difficulty: difficulty ?? _quiz!.difficulty,
+        maxTimePerQuestion: maxTimePerQuestion ?? _quiz!.maxTimePerQuestion,
+        randomizeQuestion: randomizeQuestion ?? _quiz!.randomizeQuestion,
+        isAvailable: isAvailable ?? _quiz!.isAvailable,
+        updatedAt: DateTime.now(),
+      );
+      notifyListeners();
+    }
   }
 
   void addQuestion({
@@ -123,7 +155,6 @@ class CreateQuizProvider with ChangeNotifier {
     if (_choices.any((choice) => choice.quizQuestionId == questionId && choice.value == choiceValue)) {
       return;
     }
-
     final newChoice = QuizQuestionChoiceModel(
       id: choiceId,
       quizQuestionId: questionId,
@@ -165,6 +196,8 @@ class CreateQuizProvider with ChangeNotifier {
     _questions.clear();
     _choices.clear();
     _correctChoices.clear();
+    _noOfQuestions = 0;
+    _questionControllers.clear();
     notifyListeners();
   }
 
@@ -180,14 +213,11 @@ class CreateQuizProvider with ChangeNotifier {
     }
 
     try {
-      // 1. Save the Quiz
       await quizController.insertQuiz(_quiz!);
 
-      // 2. Save Questions and Choices
       for (final question in _questions) {
         await quizQuestionController.insertQuizQuestion(question);
         final questionChoices = _choices.where((c) => c.quizQuestionId == question.id);
-
         for (final choice in questionChoices) {
           await quizQuestionChoiceController.insertQuizQuestionChoice(choice);
         }
@@ -196,10 +226,8 @@ class CreateQuizProvider with ChangeNotifier {
       print('Quiz finalized and saved to database.');
       quizProvider.getAllQuizzes();
       resetQuiz();
-
     } catch (e) {
       print('Error saving quiz: $e');
-      //Handle error appropriately, maybe show a snackbar
     }
 
     notifyListeners();

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:quizprogram/globals.dart';
 import 'package:quizprogram/screens/quiz/play/quiz_result.dart';
@@ -88,16 +89,15 @@ class _QuizPlayState extends State<QuizPlay> {
             _goToNextPage();
           } else {
             _timer?.cancel();
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => QuizResultPage(
-                  totalPoints: totalPoints,
-                  results: answerResults,
-                  nameOfTaker: widget.nameOfTaker,
-                  avatar: widget.avatar,
-                ),
-              ),
+            Get.offAll(() => QuizResultPage(
+              totalPoints: totalPoints,
+              quizId: quiz.id,
+              results: answerResults,
+              nameOfTaker: widget.nameOfTaker,
+              avatar: widget.avatar,
+            ),
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeIn
             );
           }
         }
@@ -119,16 +119,15 @@ class _QuizPlayState extends State<QuizPlay> {
       _startTimer();
     } else {
       _timer?.cancel();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => QuizResultPage(
-            totalPoints: totalPoints,
-            results: answerResults,
-            nameOfTaker: widget.nameOfTaker,
-            avatar: widget.avatar,
-          ),
-        ),
+      Get.offAll(() => QuizResultPage(
+        quizId: widget.quizId,
+        totalPoints: totalPoints,
+        results: answerResults,
+        nameOfTaker: widget.nameOfTaker,
+        avatar: widget.avatar,
+      ),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeIn
       );
     }
   }

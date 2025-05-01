@@ -81,7 +81,6 @@ class AuthUserProvider extends ChangeNotifier {
   }
 
   Future<UserModel?> authenticateUser(String username, String password) async {
-    //add user controller method and implement user data verification
     return null;
   }
 }

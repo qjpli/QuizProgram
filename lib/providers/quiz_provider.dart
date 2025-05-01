@@ -38,21 +38,18 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Add a new quiz
   Future<void> addQuiz(QuizModel quiz) async {
     await _quizController.insertQuiz(quiz);
-    await getAllQuizzes(); // Refresh list
+    await getAllQuizzes();
   }
 
-  // Update an existing quiz
   Future<void> updateQuiz(QuizModel quiz) async {
     await _quizController.updateQuiz(quiz);
-    await getAllQuizzes(); // Refresh list
+    await getAllQuizzes();
   }
 
-  // Delete a quiz
   Future<void> deleteQuiz(String id) async {
     await _quizController.deleteQuiz(id);
-    await getAllQuizzes(); // Refresh list
+    await getAllQuizzes();
   }
 }

@@ -44,6 +44,36 @@ class QuizModel {
     this.updatedAt,
   });
 
+  QuizModel copyWith({
+    String? id,
+    String? quizCategoryId,
+    String? createdBy,
+    String? name,
+    String? description,
+    String? difficulty,
+    int? totalTakers,
+    bool? isAvailable,
+    int? maxTimePerQuestion,
+    bool? randomizeQuestion,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return QuizModel(
+      id: id ?? this.id,
+      quizCategoryId: quizCategoryId ?? this.quizCategoryId,
+      createdBy: createdBy ?? this.createdBy,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      difficulty: difficulty ?? this.difficulty,
+      totalTakers: totalTakers ?? this.totalTakers,
+      isAvailable: isAvailable ?? this.isAvailable,
+      maxTimePerQuestion: maxTimePerQuestion ?? this.maxTimePerQuestion,
+      randomizeQuestion: randomizeQuestion ?? this.randomizeQuestion,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
   factory QuizModel.fromMap(Map<String, dynamic> map) {
     return QuizModel(
       id: map[QuizFields.id] ?? '',

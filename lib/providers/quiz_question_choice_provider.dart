@@ -17,20 +17,19 @@ class QuizQuestionChoiceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Fetch all choices for a quiz question
   Future<void> fetchChoices(String questionId) async {
     _choices = await _quizQuestionChoiceController.getAllQuizQuestionChoicesForQuestion(questionId);
     notifyListeners();
   }
 
-  // Add a new choice
   Future<void> addChoice(QuizQuestionChoiceModel choice) async {
     await _quizQuestionChoiceController.insertQuizQuestionChoice(choice);
     _choices.add(choice);
+
     notifyListeners();
+    await fetchAllChoices();
   }
 
-  // Update an existing choice
   Future<void> updateChoice(QuizQuestionChoiceModel updatedChoice) async {
     await _quizQuestionChoiceController.updateQuizQuestionChoice(updatedChoice);
     int index = _choices.indexWhere((choice) => choice.id == updatedChoice.id);

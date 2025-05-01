@@ -9,10 +9,8 @@ import '../../../customs/fields/custom_text_field.dart';
 import 'create_quiz_3.dart';
 
 class CreateQuiz2 extends StatefulWidget {
-  final int noOfQuestions;
   const CreateQuiz2({
     super.key,
-    required this.noOfQuestions,
   });
 
   @override
@@ -22,10 +20,11 @@ class CreateQuiz2 extends StatefulWidget {
 class _CreateQuiz2State extends State<CreateQuiz2> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  int noOfQuestions = 0;
 
   bool isForEdit = false;
 
-  final List<TextEditingController> _questionControllers = [];
+  // final List<TextEditingController> _questionControllers = [];
   final Map<String, TextEditingController> _choicesController = {};
 
   @override
@@ -38,7 +37,8 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
 
   @override
   void dispose() {
-    for (var controller in _questionControllers) {
+    final createQuizProvider = Provider.of<CreateQuizProvider>(context, listen: false);
+    for (var controller in createQuizProvider.questionControllers) {
       controller.dispose();
     }
     _choicesController.values.forEach((controller) => controller.dispose());
@@ -47,14 +47,16 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
 
   void initializeData() async {
     final createQuizProvider = Provider.of<CreateQuizProvider>(context, listen: false);
+    noOfQuestions = createQuizProvider.noOfQuestions;
 
-    for (int i = 0; i < widget.noOfQuestions; i++) {
+    for (int i = 0; i < noOfQuestions; i++) {
       final String id = Uuid().v4();
       createQuizProvider.addQuestion(
         questionId: id,
         questionText: '',
       );
-      _questionControllers.add(TextEditingController());
+
+      createQuizProvider.addQuestionController();
     }
   }
 
@@ -83,7 +85,7 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
       return;
     }
 
-    if (_currentPage < widget.noOfQuestions - 1) {
+    if (_currentPage < noOfQuestions - 1) {
       _pageController.animateToPage(
         _currentPage + 1,
         duration: Duration(milliseconds: 300),
@@ -137,6 +139,7 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
   @override
   Widget build(BuildContext context) {
     final createQuizProvider = Provider.of<CreateQuizProvider>(context);
+    noOfQuestions = createQuizProvider.noOfQuestions;
 
     return Scaffold(
       appBar: AppBar(
@@ -169,7 +172,7 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
                     ),
                     SizedBox(height: screenHeight * 0.02),
                     CustomTextFormField(
-                      controller: _questionControllers[index],
+                      controller: createQuizProvider.questionControllers[index],
                       hintText: 'Enter your question',
                       labelText: 'Question',
                       onChanged: (value) {
@@ -264,37 +267,43 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => Get.to(() => const CreateQuiz3())?.then((val) {
-                          print('Executing');
-                          if(val != null) {
-                            if(val is Map) {
-                              if(val['for'] == 'edit') {
-                                String questionId = val['questionId'];
+                        onPressed: () {
+                          setState(() {
+                            isForEdit = false;
+                          });
 
-                                print('Going to this');
+                          Get.to(() => const CreateQuiz3())?.then((val) {
+                            print('Executing');
+                            if(val != null) {
+                              if(val is Map) {
+                                if(val['for'] == 'edit') {
+                                  String questionId = val['questionId'];
 
-                                int pageToBack = createQuizProvider
-                                    .questions.indexWhere((q) => q.id == questionId);
+                                  print('Going to this');
 
-                                if (mounted) {
-                                  setState(() {
-                                    _currentPage = pageToBack;
-                                    isForEdit = true;
-                                  });
+                                  int pageToBack = createQuizProvider
+                                      .questions.indexWhere((q) => q.id == questionId);
+
+                                  if (mounted) {
+                                    setState(() {
+                                      _currentPage = pageToBack;
+                                      isForEdit = true;
+                                    });
+                                  }
+
+
+
+                                  _pageController.animateToPage(
+                                    _currentPage,
+                                    duration: Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+
                                 }
-
-
-
-                                _pageController.animateToPage(
-                                  _currentPage,
-                                  duration: Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                );
-
                               }
                             }
-                          }
-                        }),
+                          });
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF313235),
                           foregroundColor: Colors.white,

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -70,6 +71,11 @@ class _QuizPreviewState extends State<QuizPreview> {
         break;
     }
 
+    String highestScore = quizTakerProvider.quizTakers
+        .where((quizTaker) => quizTaker.quizId == quiz.id)
+        .map((quizTaker) => quizTaker.points)
+        .fold<double>(0, (max, points) => max > points ? max : points).toString();
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
@@ -83,10 +89,60 @@ class _QuizPreviewState extends State<QuizPreview> {
                     child: Stack(
                       children: [
                         Container(
-                          height: screenHeight * 0.3,
-                          width: screenWidth,
                           margin: EdgeInsets.only(bottom: screenHeight * 0.06),
-                          color: quizColor,
+                          child: Stack(
+                            children: [
+                              Container(
+                                height: screenHeight * 0.3,
+                                width: screenWidth,
+                                color: quizColor,
+                              ),
+                              Positioned(
+                                  top: 0,
+                                  right: -screenWidth * 0.15,
+                                  child: Transform.rotate(
+                                    angle: -(pi / 5),
+                                    child: Icon(Icons.science_outlined,
+                                      color: Color.lerp(quizColor, Colors.black, 0.3),
+                                      size: screenSize * 0.15,
+                                    ),
+                                  )
+                              ),
+                              Positioned(
+                                  top: screenHeight * 0.1,
+                                  left: -screenWidth * 0.15,
+                                  child: Transform.rotate(
+                                    angle: -(pi / 5),
+                                    child: Icon(Icons.add,
+                                      color: Color.lerp(quizColor, Colors.black, 0.3),
+                                      size: screenSize * 0.15,
+                                    ),
+                                  )
+                              ),
+                              Positioned(
+                                  top: -screenHeight * 0.05,
+                                  left: screenWidth * 0.15,
+                                  child: Transform.rotate(
+                                    angle: -(pi / 5),
+                                    child: Icon(Icons.ac_unit,
+                                      color: Color.lerp(quizColor, Colors.black, 0.3),
+                                      size: screenSize * 0.13,
+                                    ),
+                                  )
+                              ),
+                              Positioned(
+                                  bottom: -screenHeight * 0.1,
+                                  right: screenWidth * 0.1,
+                                  child: Transform.rotate(
+                                    angle: -(pi / 5),
+                                    child: Icon(Icons.quiz_outlined,
+                                      color: Color.lerp(quizColor, Colors.black, 0.3),
+                                      size: screenSize * 0.15,
+                                    ),
+                                  )
+                              )
+                            ],
+                          ),
                         ),
                         Positioned(
                           left: 0,
@@ -164,7 +220,7 @@ class _QuizPreviewState extends State<QuizPreview> {
                         ),
                         TitleValue(title: 'Difficulty', value: quiz.difficulty),
                         TitleValue(title: 'Total Takers', value: '${quizTakerProvider.quizTakers.where((quizTaker) => quizTaker.quizId == quiz.id).length}'),
-                        TitleValue(title: 'Highest Score', value: '${quizTakerProvider.quizTakers.firstWhereOrNull((quizTaker) => quizTaker.quizId == quiz.id)?.points ?? 0}'),
+                        TitleValue(title: 'Highest Score', value: double.parse(highestScore).toInt().toString()),
                         TitleValue(title: 'Randomized Questions', value: quiz.randomizeQuestion ? 'Yes' : 'No'),
                         TitleValue(title: 'Time per Questions', value: '${quiz.maxTimePerQuestion} secs'),
                       ],
@@ -302,21 +358,30 @@ class _QuizPreviewState extends State<QuizPreview> {
             Positioned(
               top: screenHeight * 0.06,
               right: screenWidth * 0.05,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20)
-                ),
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth * 0.03,
-                  vertical: screenHeight * 0.005
-                ),
-                child: Text('${questions.length} Questions',
-                  style: TextStyle(
-                    fontSize: screenSize * 0.01,
-                    fontWeight: FontWeight.w600
+              left: screenWidth * 0.05,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                      onTap: () => Get.back(),
+                      child: Icon(Icons.arrow_back_ios, color: Colors.white)),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20)
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.03,
+                      vertical: screenHeight * 0.005
+                    ),
+                    child: Text('${questions.length} Questions',
+                      style: TextStyle(
+                        fontSize: screenSize * 0.01,
+                        fontWeight: FontWeight.w600
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             )
           ],

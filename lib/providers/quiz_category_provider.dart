@@ -46,24 +46,20 @@ class QuizCategoryProvider extends ChangeNotifier {
     }
 
     print('Uploaded');
-    // After inserting default categories, refresh the list
     _quizCategories = defaultCategories;
     notifyListeners();
   }
 
-  // Add a new quiz category
   Future<void> addQuizCategory(QuizCategoryModel quizCategory) async {
     await _quizCategoryController.insertQuizCategory(quizCategory);
     await getAllQuizCategories(); // Refresh list
   }
 
-  // Update an existing quiz category
   Future<void> updateQuizCategory(QuizCategoryModel quizCategory) async {
     await _quizCategoryController.updateQuizCategory(quizCategory);
     await getAllQuizCategories(); // Refresh list
   }
 
-  // Delete a quiz category
   Future<void> deleteQuizCategory(String id) async {
     await _quizCategoryController.deleteQuizCategory(id);
     await getAllQuizCategories(); // Refresh list

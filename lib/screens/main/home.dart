@@ -9,6 +9,8 @@ import 'package:quizprogram/providers/quiz_category_provider.dart';
 import 'package:quizprogram/providers/quiz_provider.dart';
 import 'package:quizprogram/screens/quiz/play/quiz_preview.dart';
 
+import '../../providers/quiz_taker_provider.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -27,6 +29,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final quizTakerProvider = Provider.of<QuizTakerProvider>(context);
     final authUserProvider = Provider.of<AuthUserProvider>(context);
     final quizCategoryProvider = Provider.of<QuizCategoryProvider>(context);
     final quizProvider = Provider.of<QuizProvider>(context);
@@ -246,7 +249,7 @@ class _HomeState extends State<Home> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.quiz, // Or any other appropriate icon
+                          Icon(Icons.quiz_outlined, // Or any other appropriate icon
                             size: screenWidth * 0.08,
                           ),
                           SizedBox(height: screenHeight * 0.007),

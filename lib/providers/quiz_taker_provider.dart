@@ -8,6 +8,10 @@ class QuizTakerProvider extends ChangeNotifier {
   List<QuizTakerModel> _quizTakers = [];
   List<QuizTakerModel> get quizTakers => _quizTakers;
 
+  QuizTakerProvider() {
+    fetchQuizTakers();
+  }
+
   // Fetch all quiz takers
   Future<void> fetchQuizTakers() async {
     _quizTakers = await _quizTakerController.getAllQuizTakers();
@@ -18,6 +22,8 @@ class QuizTakerProvider extends ChangeNotifier {
   Future<void> addQuizTaker(QuizTakerModel quizTaker) async {
     await _quizTakerController.insertQuizTaker(quizTaker);
     _quizTakers.add(quizTaker);
+
+    fetchQuizTakers();
     notifyListeners();
   }
 

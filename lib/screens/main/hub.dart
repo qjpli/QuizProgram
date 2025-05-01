@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:quizprogram/globals.dart';
 import 'package:quizprogram/screens/main/category.dart';
+import 'package:quizprogram/screens/main/history.dart';
 import 'package:quizprogram/screens/main/home.dart';
 import 'package:quizprogram/screens/main/profile.dart';
 import 'package:quizprogram/screens/quiz/create/create_quiz_1.dart';
@@ -86,6 +87,7 @@ class _HubState extends State<Hub> {
                 children: [
                   const Home(),
                   const Category(),
+                  const History(),
                   const Profile()
                 ],
               ),
@@ -124,7 +126,7 @@ class _HubState extends State<Hub> {
                       SizedBox.shrink(),
                       navMenu(
                           index: 2,
-                          title: 'Leaderboard',
+                          title: 'History',
                           icon: 'leaderboard'
                       ),
                       navMenu(
