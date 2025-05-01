@@ -16,13 +16,17 @@ class CreateQuiz extends StatefulWidget {
 }
 
 class _CreateQuizState extends State<CreateQuiz> {
+  List<String> difficulties = ['Easy', 'Medium', 'Hard'];
+
+
   String selectedCategory = '';
   final TextEditingController _quizNameController = TextEditingController();
   final TextEditingController _quizDescController = TextEditingController();
   final TextEditingController _quizQuestionsNoController = TextEditingController();
   final TextEditingController _quizTimePerQuestionController = TextEditingController();
 
-
+  bool isRandomized = false;
+  int selectedDifficulty = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +139,8 @@ class _CreateQuizState extends State<CreateQuiz> {
                           ),
                           margin: EdgeInsets.only(
                               left: index == 0 ?
-                              screenWidth * 0.06 : screenWidth * 0.03
+                              screenWidth * 0.06 : screenWidth * 0.03,
+                              right: index == quizCategoryProvider.quizCategories.length - 1 ? screenWidth * 0.06 : screenWidth * 0.0
                           ),
                           decoration: BoxDecoration(
                               color: selectedCategory == category.id ?
@@ -151,6 +156,56 @@ class _CreateQuizState extends State<CreateQuiz> {
                         ),
                       );
                     },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth * 0.06
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: screenHeight * 0.035),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: screenWidth * 0.02
+                        ),
+                        child: Text('Quiz Difficulty',
+                          style: TextStyle(
+
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.04,
+                          vertical: screenHeight * 0.002
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFf2f2f2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<int>(
+                            isExpanded: true,
+                            value: selectedDifficulty >= 0 ? selectedDifficulty : null,
+                            hint: Text('Select Difficulty'),
+                            items: List.generate(difficulties.length, (index) {
+                              return DropdownMenuItem<int>(
+                                value: index,
+                                child: Text(difficulties[index], style: TextStyle(fontWeight: FontWeight.w400),),
+                              );
+                            }),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedDifficulty = value!;
+                              });
+                            },
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
                 Padding(
@@ -219,18 +274,20 @@ class _CreateQuizState extends State<CreateQuiz> {
                         padding: EdgeInsets.only(
                             left: screenWidth * 0.02
                         ),
-                        child: Text('Timer per Question',
+                        child: Text('Randomized Questions',
                           style: TextStyle(
 
                           ),
                         ),
                       ),
-                      CustomTextFormField(
-                        controller: _quizTimePerQuestionController,
-                        hintText: 'Enter time per question',
-                        keyboardType: TextInputType.number,
-                        onChanged: (val) => setState(() {}),
-                      ),
+                      Switch(
+                        value: isRandomized,
+                        onChanged: (val) {
+                          setState(() {
+                            isRandomized = val;
+                          });
+                        }
+                      )
                     ],
                   ),
                 ),
@@ -251,9 +308,9 @@ class _CreateQuizState extends State<CreateQuiz> {
                     quizCategoryId: selectedCategory,
                     name: _quizNameController.text.trim(),
                     description: _quizDescController.text.trim(),
-                    difficulty: 'Normal',
+                    difficulty: difficulties[selectedDifficulty],
                     maxTimePerQuestion: int.tryParse(_quizTimePerQuestionController.text.trim()) ?? 0,
-                    randomizeQuestion: false
+                    randomizeQuestion: isRandomized
                 );
 
                   Get.to(() => CreateQuiz2(

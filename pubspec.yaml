@@ -122,6 +122,7 @@ flutter:
 
   assets:
     - assets/images/general/
+    - assets/images/avatars/
     - assets/svgs/general/
     - assets/svgs/categoryicons/
 

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:quizprogram/globals.dart';
 import 'package:quizprogram/models/quiz_model.dart';
 import 'package:quizprogram/providers/auth_user_provider.dart';
 import 'package:quizprogram/providers/quiz_category_provider.dart';
 import 'package:quizprogram/providers/quiz_provider.dart';
+import 'package:quizprogram/screens/quiz/play/quiz_preview.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -203,7 +205,7 @@ class _HomeState extends State<Home> {
                   ),
                 )
                 : Container(
-              height: screenHeight * 0.13,
+              height: screenHeight * 0.15,
               margin: EdgeInsets.only(top: screenHeight * 0.01),
               width: screenWidth,
               child: ListView.builder(
@@ -213,9 +215,9 @@ class _HomeState extends State<Home> {
                 itemBuilder: (context, index) {
                   final quiz = quizProvider.quizzes[index];
                   return InkWell(
-                    onTap: () {
-                      
-                    },
+                    onTap: () => Get.to(() => QuizPreview(quizId: quiz.id),
+                      transition: Transition.fadeIn
+                    ),
                     child: Container(
                       decoration: BoxDecoration(
                           color: Colors.white,
@@ -230,6 +232,7 @@ class _HomeState extends State<Home> {
                           borderRadius: BorderRadius.circular(10)
                       ),
                       width: screenWidth * 0.26,
+                      alignment: Alignment.center,
                       margin: EdgeInsets.only(
                           left: index == 0 ? screenWidth * 0.05 : screenWidth * 0.03,
                           right: index == quizProvider.quizzes.length - 1 ? screenWidth * 0.05 : 0,
@@ -241,6 +244,7 @@ class _HomeState extends State<Home> {
                           horizontal: screenWidth * 0.02
                       ),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.quiz, // Or any other appropriate icon
                             size: screenWidth * 0.08,
