@@ -5,6 +5,7 @@ import 'package:quizprogram/models/quiz_model.dart';
 import 'package:quizprogram/models/quiz_question_choice_model.dart';
 import 'package:quizprogram/models/quiz_question_model.dart';
 import 'package:quizprogram/providers/auth_user_provider.dart';
+import 'package:quizprogram/providers/quiz_provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../controllers/quiz_controller.dart';
@@ -168,6 +169,7 @@ class CreateQuizProvider with ChangeNotifier {
   }
 
   Future<void> finalizeQuiz() async {
+    final quizProvider = Provider.of<QuizProvider>(Get.context as BuildContext, listen: false);
     final QuizController quizController = QuizController();
     final QuizQuestionController quizQuestionController = QuizQuestionController();
     final QuizQuestionChoiceController quizQuestionChoiceController = QuizQuestionChoiceController();
@@ -192,6 +194,7 @@ class CreateQuizProvider with ChangeNotifier {
       }
 
       print('Quiz finalized and saved to database.');
+      quizProvider.getAllQuizzes();
       resetQuiz();
 
     } catch (e) {

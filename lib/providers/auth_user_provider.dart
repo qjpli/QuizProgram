@@ -61,16 +61,18 @@ class AuthUserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loginUser(String username, String password) async {
+  Future<bool> loginUser(String username, String password) async {
     UserModel? user = await _userController.authenticateUser(username, password);
 
     if (user != null) {
       await setAuthUser(user);
 
-
       print('Set');
+      return true;
     } else {
       print('Login failed');
+
+      return false;
     }
   }
 

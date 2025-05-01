@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:quizprogram/globals.dart';
 import 'package:quizprogram/providers/creating_quiz/create_quiz_provider.dart';
 
+import '../../main/hub.dart';
+
 class CreateQuiz3 extends StatefulWidget {
   const CreateQuiz3({super.key});
 
@@ -139,9 +141,10 @@ class _CreateQuiz3State extends State<CreateQuiz3> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
-          onPressed: () {
-            createQuizProvider.finalizeQuiz();
-            Navigator.pop(context);
+          onPressed: () async {
+            await createQuizProvider.finalizeQuiz();
+
+            Get.offAll(() => const Hub());
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF313235),

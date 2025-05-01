@@ -122,9 +122,13 @@ class _SignInState extends State<SignIn> {
                         String password = _passwordController.text.trim();
 
                         try {
-                          await authUserProvider.loginUser(username, password);
+                          final status = await authUserProvider.loginUser(username, password);
 
-                          Get.offAll(() => const Hub());
+                          if(status) {
+                            Get.offAll(() => const Hub());
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login failed. Invalid username or password.')));
+                          }
                         } catch (e) {
                           // Show error message if login fails
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login failed. Invalid username or password.')));

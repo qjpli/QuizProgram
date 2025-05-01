@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:quizprogram/models/quiz_model.dart';
 import 'package:quizprogram/controllers/quiz_controller.dart';
+
+import 'auth_user_provider.dart';
 
 class QuizProvider extends ChangeNotifier {
   final QuizController _quizController = QuizController();
@@ -11,6 +15,21 @@ class QuizProvider extends ChangeNotifier {
 
   QuizProvider() {
     getAllQuizzes();
+    fetchQuizzesForUser();
+  }
+
+  Future<void> fetchQuizzesForUser() async {
+    final authUserProvider = Provider.of<AuthUserProvider>(Get.context as BuildContext, listen: false);
+
+    final userId = authUserProvider.authUser?.id ?? '';
+
+    // Fetch all quizzes
+    List<QuizModel> allQuizzes = await _quizController.getAllQuizzes();
+
+    // Filter based on createdBy id
+    _quizzes = allQuizzes.where((quiz) => quiz.createdBy == userId).toList();
+
+    notifyListeners();
   }
 
   // Fetch all quizzes
