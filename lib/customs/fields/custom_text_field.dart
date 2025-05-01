@@ -32,7 +32,7 @@ class CustomTextFormField extends StatefulWidget {
     this.borderColor,
     this.iconColor,
     this.isPassword = false,
-    this.maxLines,
+    this.maxLines = 1,
     this.labelText,
     this.labelStyle,
     this.focusNode, // Added FocusNode

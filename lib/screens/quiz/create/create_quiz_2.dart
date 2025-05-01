@@ -23,8 +23,10 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  List<TextEditingController> _questionControllers = [];
-  Map<String, TextEditingController> _choicesController = {};
+  bool isForEdit = false;
+
+  final List<TextEditingController> _questionControllers = [];
+  final Map<String, TextEditingController> _choicesController = {};
 
   @override
   void initState() {
@@ -88,20 +90,33 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
         curve: Curves.easeInOut,
       );
     } else {
-      Get.to(() =>
-          CreateQuiz3())?.then((val) {
-
+      Get.to(() => CreateQuiz3())?.then((val) {
+            print('Executing');
             if(val != null) {
               if(val is Map) {
                 if(val['for'] == 'edit') {
                   String questionId = val['questionId'];
 
+                  print('Going to this');
+
                   int pageToBack = createQuizProvider
                     .questions.indexWhere((q) => q.id == questionId);
 
-                  setState(() {
-                    _currentPage = pageToBack;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      _currentPage = pageToBack;
+                      isForEdit = true;
+                    });
+                  }
+
+
+
+                  _pageController.animateToPage(
+                    _currentPage,
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+
                 }
               }
             }
@@ -241,18 +256,80 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
             bottom: 20,
             left: 0,
             right: 0,
-            child: Container(
+            child: isForEdit ?
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Get.to(() => const CreateQuiz3())?.then((val) {
+                          print('Executing');
+                          if(val != null) {
+                            if(val is Map) {
+                              if(val['for'] == 'edit') {
+                                String questionId = val['questionId'];
+
+                                print('Going to this');
+
+                                int pageToBack = createQuizProvider
+                                    .questions.indexWhere((q) => q.id == questionId);
+
+                                if (mounted) {
+                                  setState(() {
+                                    _currentPage = pageToBack;
+                                    isForEdit = true;
+                                  });
+                                }
+
+
+
+                                _pageController.animateToPage(
+                                  _currentPage,
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+
+                              }
+                            }
+                          }
+                        }),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF313235),
+                          foregroundColor: Colors.white,
+                        ),
+                        child: Text('Done Edit'),
+                      ),
+                    ),
+                  ],
+                ),
+              ) :
+              Container(
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
-                    onPressed: _goToPreviousPage,
-                    child: Text('Previous'),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _currentPage > 0 ? _goToPreviousPage : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF313235),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text('Previous'),
+                    ),
                   ),
-                  ElevatedButton(
-                    onPressed: _goToNextPage,
-                    child: Text('Next'),
+                  SizedBox(width: screenWidth * 0.06),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _goToNextPage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF313235),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: Text('Next'),
+                    ),
                   ),
                 ],
               ),

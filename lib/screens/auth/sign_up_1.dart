@@ -75,6 +75,8 @@ class _SignUp1State extends State<SignUp1> {
               ),
             ),
             Container(
+              constraints: BoxConstraints(
+              ),
               child: Column(
                 children: [
                   SizedBox(height: screenHeight * 0.04),
