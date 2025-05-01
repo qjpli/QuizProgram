@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:quizprogram/providers/auth_user_provider.dart';
+import 'package:quizprogram/providers/creating_quiz/create_quiz_provider.dart';
 import 'package:quizprogram/providers/quiz_category_provider.dart';
 import 'package:quizprogram/providers/quiz_provider.dart';
 import 'package:quizprogram/providers/quiz_question_choice_provider.dart';
@@ -44,7 +45,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => QuizCategoryProvider()),
         ChangeNotifierProvider(create: (_) => QuizQuestionChoiceProvider()),
         ChangeNotifierProvider(create: (_) => QuizQuestionProvider()),
-        ChangeNotifierProvider(create: (_) => QuizTakerProvider())
+        ChangeNotifierProvider(create: (_) => QuizTakerProvider()),
+        ChangeNotifierProvider(create: (_) => CreateQuizProvider())
       ],
       child: const MyApp(),
     ),

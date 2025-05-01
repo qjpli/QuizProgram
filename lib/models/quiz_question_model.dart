@@ -23,6 +23,23 @@ class QuizQuestionModel {
     this.updatedAt,
   });
 
+  QuizQuestionModel copyWith({
+    String? id,
+    String? quizId,
+    String? question,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return QuizQuestionModel(
+      id: id ?? this.id,
+      quizId: quizId ?? this.quizId,
+      question: question ?? this.question,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+
   factory QuizQuestionModel.fromMap(Map<String, dynamic> map) {
     return QuizQuestionModel(
       id: map[QuizQuestionFields.id] ?? '',
@@ -49,4 +66,6 @@ class QuizQuestionModel {
 
   factory QuizQuestionModel.fromJson(String source) =>
       QuizQuestionModel.fromMap(json.decode(source));
+
+
 }

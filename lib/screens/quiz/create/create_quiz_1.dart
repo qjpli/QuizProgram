@@ -6,6 +6,8 @@ import 'package:quizprogram/globals.dart';
 import 'package:quizprogram/providers/quiz_category_provider.dart';
 import 'package:quizprogram/screens/quiz/create/create_quiz_2.dart';
 
+import '../../../providers/creating_quiz/create_quiz_provider.dart';
+
 class CreateQuiz extends StatefulWidget {
   const CreateQuiz({super.key});
 
@@ -33,6 +35,7 @@ class _CreateQuizState extends State<CreateQuiz> {
         _quizTimePerQuestionController.text.trim().isNotEmpty;
 
     final quizCategoryProvider = Provider.of<QuizCategoryProvider>(context);
+    final createQuizProvider = Provider.of<CreateQuizProvider>(context);
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
@@ -213,6 +216,16 @@ class _CreateQuizState extends State<CreateQuiz> {
             right: screenWidth * 0.06,
             child: ElevatedButton(
               onPressed: isAllowed ? () {
+
+                createQuizProvider.setQuizMetadata(
+                    quizCategoryId: selectedCategory,
+                    name: _quizNameController.text.trim(),
+                    description: _quizDescController.text.trim(),
+                    difficulty: 'Normal',
+                    maxTimePerQuestion: int.tryParse(_quizTimePerQuestionController.text.trim()) ?? 0,
+                    randomizeQuestion: false
+                );
+
                 Get.to(() => CreateQuiz2(
                     name: _quizNameController.text.trim(),
                     description: _quizDescController.text.trim(),
