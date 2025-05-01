@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:quizprogram/providers/creating_quiz/create_quiz_provider.dart';
 
@@ -21,46 +22,54 @@ class CreateQuiz3 extends StatelessWidget {
             final question = createQuizProvider.questions[index];
             final choicesForQuestion = createQuizProvider.choices.where((choice) => choice.quizQuestionId == question.id).toList();
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Card(
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Question ${index + 1}: ${question.question}',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      SizedBox(height: 10),
-                      ...choicesForQuestion.map((choice) {
-                        bool isCorrect = choice.isCorrect;
-                        return Row(
-                          children: [
-                            Text(
-                              '${choice.value}',
-                              style: TextStyle(fontSize: 14),
-                            ),
-                            SizedBox(width: 10),
-                            if (isCorrect)
-                              Icon(
-                                Icons.check_circle,
-                                color: Colors.green,
-                                size: 20,
+            return InkWell(
+              onTap: () => Get.back(
+                result: {
+                  'for': 'edit',
+                  'questionId': question.id
+                }
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Card(
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Question ${index + 1}: ${question.question}',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        SizedBox(height: 10),
+                        ...choicesForQuestion.map((choice) {
+                          bool isCorrect = choice.isCorrect;
+                          return Row(
+                            children: [
+                              Text(
+                                '${choice.value}',
+                                style: TextStyle(fontSize: 14),
                               ),
-                            if (!isCorrect)
-                              Icon(
-                                Icons.cancel,
-                                color: Colors.red,
-                                size: 20,
-                              ),
-                          ],
-                        );
-                      }).toList(),
-                      Divider(),
-                    ],
+                              SizedBox(width: 10),
+                              if (isCorrect)
+                                Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                  size: 20,
+                                ),
+                              if (!isCorrect)
+                                Icon(
+                                  Icons.cancel,
+                                  color: Colors.red,
+                                  size: 20,
+                                ),
+                            ],
+                          );
+                        }).toList(),
+                        Divider(),
+                      ],
+                    ),
                   ),
                 ),
               ),

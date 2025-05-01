@@ -57,6 +57,30 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
   }
 
   void _goToNextPage() {
+    final createQuizProvider = Provider.of<CreateQuizProvider>(context, listen: false);
+    final question = createQuizProvider.questions[_currentPage];
+
+    if (question.question.isEmpty) {
+      Get.snackbar('Error', 'Please enter a valid question.');
+      return;
+    }
+
+    final choicesForQuestion = createQuizProvider.choices
+        .where((e) => e.quizQuestionId == question.id)
+        .toList();
+
+    if (choicesForQuestion.length < 2) {
+      Get.snackbar('Error', 'Please add at least 2 choices.');
+      return;
+    }
+
+    bool hasCorrectChoice = choicesForQuestion.any((choice) => choice.isCorrect);
+
+    if (!hasCorrectChoice) {
+      Get.snackbar('Error', 'Please select at least 1 correct choice.');
+      return;
+    }
+
     if (_currentPage < widget.noOfQuestions - 1) {
       _pageController.animateToPage(
         _currentPage + 1,
@@ -64,11 +88,26 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
         curve: Curves.easeInOut,
       );
     } else {
-      // On the last question, navigate to CreateQuiz3 to review the quiz
-      Get.to(() => CreateQuiz3());
+      Get.to(() =>
+          CreateQuiz3())?.then((val) {
+
+            if(val != null) {
+              if(val is Map) {
+                if(val['for'] == 'edit') {
+                  String questionId = val['questionId'];
+
+                  int pageToBack = createQuizProvider
+                    .questions.indexWhere((q) => q.id == questionId);
+
+                  setState(() {
+                    _currentPage = pageToBack;
+                  });
+                }
+              }
+            }
+      });
     }
   }
-
 
   void _goToPreviousPage() {
     if (_currentPage > 0) {
@@ -113,10 +152,11 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
                         fontSize: screenSize * 0.016,
                       ),
                     ),
+                    SizedBox(height: screenHeight * 0.02),
                     CustomTextFormField(
                       controller: _questionControllers[index],
                       hintText: 'Enter your question',
-                      labelText: 'Question Text',
+                      labelText: 'Question',
                       onChanged: (value) {
                         createQuizProvider.updateQuestion(
                           index: index,
@@ -125,14 +165,12 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
                       },
                     ),
                     SizedBox(height: 20),
-                    // Display Choices for this Question
                     for (int i = 0; i < createQuizProvider.choices.where((e) => e.quizQuestionId == question.id).length; i++)
                       Container(
                         margin: EdgeInsets.only(top: screenHeight * 0.016),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // X mark to delete the choice
                             GestureDetector(
                               onTap: () {
                                 final choiceId = createQuizProvider.choices.where((e) => e.quizQuestionId == question.id).toList()[i].id;
@@ -140,11 +178,10 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
                               },
                               child: Icon(
                                 Icons.close,
-                                color: Colors.red, // You can customize the color here
+                                color: Colors.red,
                               ),
                             ),
                             SizedBox(width: 10),
-                            // Choice Text Field
                             Expanded(
                               child: CustomTextFormField(
                                 controller: _choicesController[createQuizProvider.choices.where((e) => e.quizQuestionId == question.id).toList()[i].id] ?? TextEditingController(),
@@ -155,15 +192,14 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
                                     questionId: question.id,
                                     choiceId: createQuizProvider.choices.where((e) => e.quizQuestionId == question.id).toList()[i].id,
                                     updatedChoiceValue: value,
-                                    updatedIsCorrect: false, // This could be based on your logic later
+                                    updatedIsCorrect: false,
                                   );
                                 },
                               ),
                             ),
-                            // Radio Button to mark as correct
                             Radio<String>(
                               value: createQuizProvider.choices.where((e) => e.quizQuestionId == question.id).toList()[i].id,
-                              groupValue: createQuizProvider.getSelectedChoiceId(question.id), // Get selected choice from provider
+                              groupValue: createQuizProvider.getSelectedChoiceId(question.id),
                               onChanged: (String? selectedChoiceId) {
                                 setState(() {
                                   createQuizProvider.setCorrectChoice(question.id, selectedChoiceId);
@@ -184,7 +220,7 @@ class _CreateQuiz2State extends State<CreateQuiz2> {
                               choiceId: id,
                               questionId: question.id,
                               choiceValue: '',
-                              isCorrect: false, // Set the correct flag based on your logic
+                              isCorrect: false,
                             );
                             _choicesController[id] = TextEditingController(text: '');
                           },
