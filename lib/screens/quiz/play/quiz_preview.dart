@@ -7,6 +7,8 @@ import 'package:quizprogram/screens/quiz/play/quiz_play.dart';
 
 import '../../../customs/fields/custom_text_field.dart';
 import '../../../globals.dart';
+import '../../../models/quiz_taker_model.dart';
+import '../../../providers/auth_user_provider.dart';
 import '../../../providers/quiz_category_provider.dart';
 import '../../../providers/quiz_provider.dart';
 import '../../../providers/quiz_question_provider.dart';
@@ -15,10 +17,7 @@ import '../../../providers/quiz_taker_provider.dart';
 class QuizPreview extends StatefulWidget {
   final String quizId;
 
-  const QuizPreview({
-    super.key,
-    required this.quizId
-  });
+  const QuizPreview({super.key, required this.quizId});
 
   @override
   State<QuizPreview> createState() => _QuizPreviewState();
@@ -26,13 +25,21 @@ class QuizPreview extends StatefulWidget {
 
 class _QuizPreviewState extends State<QuizPreview> {
   final TextEditingController _nameOfTakerController = TextEditingController();
-  List<String> avatars = ['human-1.png', 'human-2.png', 'human-3.png', 'animal-1.png', 'animal-2.png', 'animal-3.png'];
+  List<String> avatars = [
+    'human-1.png',
+    'human-2.png',
+    'human-3.png',
+    'animal-1.png',
+    'animal-2.png',
+    'animal-3.png'
+  ];
   String selectedAvatar = 'human-1.png';
 
   Widget buildPodium({
     required int place,
     required double height,
     required String name,
+    required String avatar,
     required String score,
     required IconData icon,
     required Color color,
@@ -40,14 +47,32 @@ class _QuizPreviewState extends State<QuizPreview> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
+        Container(
+          margin: EdgeInsets.only(
+            bottom: screenHeight * 0.01
+          ),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: color,
+              width: 2
+            )
+          ),
+          child: Image.asset('assets/images/avatars/$avatar',
+            width: screenWidth * 0.1,
+          ),
+        ),
         Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(score, style: TextStyle(fontSize: 14)),
-            Icon(icon, size: 14, color: Colors.blue),
+            SizedBox(width: screenWidth * 0.01),
+            Icon(Icons.star, size: 14, color: color),
           ],
         ),
+        SizedBox(height: screenHeight * 0.01),
         Container(
           width: 80,
           height: height,
@@ -77,7 +102,6 @@ class _QuizPreviewState extends State<QuizPreview> {
     final questions = quizQuestionProvider.quizQuestions.where((question) => question.quizId == widget.quizId).toList();
     final quizCategory = quizCategoryProvider.quizCategories.firstWhere((quizCategory) => quizCategory.id == quiz.quizCategoryId);
     Color quizColor = Colors.black;
-
 
     switch (quizCategory.svgIcon) {
       case 'art-and-culture':
@@ -109,10 +133,18 @@ class _QuizPreviewState extends State<QuizPreview> {
         break;
     }
 
-    String highestScore = quizTakerProvider.quizTakers
+    // Get quiz takers and sort by score descending
+    List<QuizTakerModel> quizTakers = quizTakerProvider.quizTakers
         .where((quizTaker) => quizTaker.quizId == quiz.id)
-        .map((quizTaker) => quizTaker.points)
-        .fold<double>(0, (max, points) => max > points ? max : points).toString();
+        .toList();
+
+    quizTakers.sort((a, b) => b.points.compareTo(a.points));
+
+    // Extract top 3 takers for podium
+    List<QuizTakerModel> topTakers = quizTakers.sublist(0, min(3, quizTakers.length));
+
+    // Extract remaining takers for list
+    List<QuizTakerModel> otherTakers = quizTakers.length > 3 ? quizTakers.sublist(3) : [];
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -191,12 +223,12 @@ class _QuizPreviewState extends State<QuizPreview> {
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Color.lerp(quizColor, Colors.white, 0.4),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 2
-                                  )
+                                    color: Color.lerp(quizColor, Colors.white, 0.4),
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                        color: Colors.white,
+                                        width: 2
+                                    )
                                 ),
                                 padding: EdgeInsets.all(screenSize * 0.016),
                                 child: SvgPicture.asset('assets/svgs/categoryicons/${quizCategory.svgIcon}.svg',
@@ -211,7 +243,7 @@ class _QuizPreviewState extends State<QuizPreview> {
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: screenWidth * 0.06
+                        horizontal: screenWidth * 0.06
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -258,11 +290,12 @@ class _QuizPreviewState extends State<QuizPreview> {
                         ),
                         TitleValue(title: 'Difficulty', value: quiz.difficulty),
                         TitleValue(title: 'Total Takers', value: '${quizTakerProvider.quizTakers.where((quizTaker) => quizTaker.quizId == quiz.id).length}'),
-                        TitleValue(title: 'Highest Score', value: double.parse(highestScore).toInt().toString()),
+                        TitleValue(title: 'Highest Score', value: quizTakers.isNotEmpty ? double.parse(quizTakers.map((quizTaker) => quizTaker.points).fold<double>(0, (max, points) => max > points ? max : points).toString()).toInt().toString() : 'No takers yet'),
                         TitleValue(title: 'Randomized Questions', value: quiz.randomizeQuestion ? 'Yes' : 'No'),
                         TitleValue(title: 'Time per Questions', value: '${quiz.maxTimePerQuestion} secs'),
                         SizedBox(height: screenHeight * 0.03),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text('Quiz Leaderboard',
                               style: TextStyle(
@@ -280,32 +313,38 @@ class _QuizPreviewState extends State<QuizPreview> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               // Second Place
-                              buildPodium(
-                                place: 2,
-                                height: 120,
-                                name: "Alena Dolin",
-                                score: "1,455",
-                                icon: Icons.diamond,
-                                color: Colors.green[400]!,
-                              ),
+                              if (topTakers.length > 1)
+                                buildPodium(
+                                  place: 2,
+                                  height: 120,
+                                  name: topTakers[1].displayname,
+                                  avatar: topTakers[1].avatarUsed,
+                                  score: topTakers[1].points.toInt().toString(),
+                                  icon: Icons.diamond,
+                                  color: Color.lerp(quizColor, Colors.black, 0.2)!,
+                                ) else SizedBox(width: 80),
                               // First Place
-                              buildPodium(
-                                place: 1,
-                                height: 160,
-                                name: "Top User",
-                                score: "2,689",
-                                icon: Icons.diamond,
-                                color: Colors.green[300]!,
-                              ),
+                              if (topTakers.isNotEmpty)
+                                buildPodium(
+                                  place: 1,
+                                  height: 160,
+                                  name: topTakers[0].displayname,
+                                  avatar: topTakers[0].avatarUsed,
+                                  score: topTakers[0].points.toInt().toString(),
+                                  icon: Icons.diamond,
+                                  color: Color.lerp(quizColor, Colors.black, 0.1)!,
+                                ) else SizedBox(width: 80),
                               // Third Place
-                              buildPodium(
-                                place: 3,
-                                height: 100,
-                                name: "Craig Gouse",
-                                score: "1,069",
-                                icon: Icons.diamond,
-                                color: Colors.green[500]!,
-                              ),
+                              if (topTakers.length > 2)
+                                buildPodium(
+                                  place: 3,
+                                  height: 100,
+                                  name: topTakers[2].displayname,
+                                  avatar: topTakers[2].avatarUsed,
+                                  score: topTakers[2].points.toInt().toString(),
+                                  icon: Icons.diamond,
+                                  color: Color.lerp(quizColor, Colors.black, 0.3)!,
+                                )else SizedBox(width: 80),
                             ],
                           ),
                         ),
@@ -323,22 +362,32 @@ class _QuizPreviewState extends State<QuizPreview> {
                           ],
                         ),
                         Container(
+                          height: otherTakers.length * 80,
+                          margin: EdgeInsets.only(
+                            bottom: screenHeight * 0.03
+                          ),
                           child: ListView.builder(
-                            itemCount: 1,
-                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: otherTakers.length,
                             itemBuilder: (context, index) {
-
+                              final taker = otherTakers[index];
                               return Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10)
                                 ),
                                 margin: EdgeInsets.only(
-                                  bottom: screenHeight * 0.015
+                                    bottom: screenHeight * 0.015
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: screenWidth * 0.03,
+                                    vertical: screenHeight * 0.012
                                 ),
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-
+                                    Text('${index + 4}. ${taker.displayname}'),
+                                    Text('${taker.points.toInt()} points')
                                   ],
                                 ),
                               );
@@ -354,130 +403,130 @@ class _QuizPreviewState extends State<QuizPreview> {
             ),
           ),
           Positioned(
-            bottom: screenHeight * 0.05,
-            left: screenWidth * 0.05,
-            right: screenWidth * 0.05,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF313235),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              bottom: screenHeight * 0.05,
+              left: screenWidth * 0.05,
+              right: screenWidth * 0.05,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF313235),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    fixedSize: Size(
+                        screenWidth * 0.9,
+                        screenHeight * 0.06
+                    )
                 ),
-                fixedSize: Size(
-                    screenWidth * 0.9,
-                    screenHeight * 0.06
-                )
-              ),
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true, // important!
-                  builder: (context) {
-                    return StatefulBuilder(
-                      builder: (context, setState) {
-                        return Padding(
-                          padding: EdgeInsets.only(
-                              bottom: MediaQuery.of(context).viewInsets.bottom
-                          ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(height: screenHeight * 0.034),
-                                      Text('Enter a name for this quiz'),
-                                      SizedBox(height: screenHeight * 0.02),
-                                      CustomTextFormField(
-                                        controller: _nameOfTakerController,
-                                        hintText: 'Enter your name',
-                                        labelText: 'Name',
-                                        onChanged: (value) {
-                                          setState(() {
-      
-                                          });
-                                        },
-                                      ),
-                                      SizedBox(height: screenHeight * 0.01),
-                                      Text('Select an Avatar'),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  height: screenHeight * 0.1,
-                                  child: ListView.builder(
-                                    itemCount: avatars.length,
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    itemBuilder: (context, index) {
-                                      return InkWell(
-                                          onTap: () {
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true, // important!
+                    builder: (context) {
+                      return StatefulBuilder(
+                        builder: (context, setState) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).viewInsets.bottom
+                            ),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: screenHeight * 0.034),
+                                        Text('Enter a name for this quiz'),
+                                        SizedBox(height: screenHeight * 0.02),
+                                        CustomTextFormField(
+                                          controller: _nameOfTakerController,
+                                          hintText: 'Enter your name',
+                                          labelText: 'Name',
+                                          onChanged: (value) {
                                             setState(() {
-                                              selectedAvatar = avatars[index];
+
                                             });
                                           },
-                                          splashFactory: NoSplash.splashFactory,
-                                          highlightColor: Colors.transparent,
-                                          splashColor: Colors.transparent,
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                              left: index == 0 ? screenWidth * 0.06 : screenWidth * 0.03,
-                                              right: index == avatars.length - 1 ? screenWidth * 0.06 : 0
-                                            ),
-                                            decoration: BoxDecoration(
-                                              border: selectedAvatar == avatars[index] ?
-                                              Border.all(
-                                                  color: quizColor,
-                                                  width: 2
-                                              ) : null,
-                                              shape: BoxShape.circle
-                                            ),
-                                            child: Image.asset('assets/images/avatars/${avatars[index]}',
-                                              width: screenWidth * 0.14,
-                                            ),
-                                          )
-                                      );
+                                        ),
+                                        SizedBox(height: screenHeight * 0.01),
+                                        Text('Select an Avatar'),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    height: screenHeight * 0.1,
+                                    child: ListView.builder(
+                                      itemCount: avatars.length,
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      itemBuilder: (context, index) {
+                                        return InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                selectedAvatar = avatars[index];
+                                              });
+                                            },
+                                            splashFactory: NoSplash.splashFactory,
+                                            highlightColor: Colors.transparent,
+                                            splashColor: Colors.transparent,
+                                            child: Container(
+                                              margin: EdgeInsets.only(
+                                                  left: index == 0 ? screenWidth * 0.06 : screenWidth * 0.03,
+                                                  right: index == avatars.length - 1 ? screenWidth * 0.06 : 0
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  border: selectedAvatar == avatars[index] ?
+                                                  Border.all(
+                                                      color: quizColor,
+                                                      width: 2
+                                                  ) : null,
+                                                  shape: BoxShape.circle
+                                              ),
+                                              child: Image.asset('assets/images/avatars/${avatars[index]}',
+                                                width: screenWidth * 0.14,
+                                              ),
+                                            )
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(height: screenHeight * 0.03),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color(0xFF313235),
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        fixedSize: Size(
+                                            screenWidth * 0.9,
+                                            screenHeight * 0.06
+                                        )
+                                    ),
+                                    onPressed: _nameOfTakerController.text.trim().isEmpty ? null : () {
+                                      Get.back();
+                                      Get.to(() => QuizPlay(
+                                          quizId: quiz.id,
+                                          nameOfTaker: _nameOfTakerController.text.trim(),
+                                          avatar: selectedAvatar
+                                      ));
                                     },
+                                    child: Text('Continue'),
                                   ),
-                                ),
-                                SizedBox(height: screenHeight * 0.03),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF313235),
-                                      foregroundColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      fixedSize: Size(
-                                          screenWidth * 0.9,
-                                          screenHeight * 0.06
-                                      )
-                                  ),
-                                  onPressed: _nameOfTakerController.text.trim().isEmpty ? null : () {
-                                    Get.back();
-                                    Get.to(() => QuizPlay(
-                                      quizId: quiz.id,
-                                      nameOfTaker: _nameOfTakerController.text.trim(),
-                                      avatar: selectedAvatar
-                                    ));
-                                  },
-                                  child: Text('Continue'),
-                                ),
-                                SizedBox(height: screenHeight * 0.02),
-                              ],
+                                  SizedBox(height: screenHeight * 0.02),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-              child: Text('Play', style: TextStyle(color: Colors.white),),
-            )
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+                child: Text('Play', style: TextStyle(color: Colors.white),),
+              )
           ),
           Positioned(
             top: screenHeight * 0.06,
@@ -491,17 +540,17 @@ class _QuizPreviewState extends State<QuizPreview> {
                     child: Icon(Icons.arrow_back_ios, color: Colors.white)),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20)
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20)
                   ),
                   padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.03,
-                    vertical: screenHeight * 0.005
+                      horizontal: screenWidth * 0.03,
+                      vertical: screenHeight * 0.005
                   ),
                   child: Text('${questions.length} Questions',
                     style: TextStyle(
-                      fontSize: screenSize * 0.01,
-                      fontWeight: FontWeight.w600
+                        fontSize: screenSize * 0.01,
+                        fontWeight: FontWeight.w600
                     ),
                   ),
                 ),
@@ -533,31 +582,31 @@ class _TitleValueState extends State<TitleValue> {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(
-        top: screenHeight * 0.005
+          top: screenHeight * 0.005
       ),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade300,
-            width: 0.6
-          )
+            bottom: BorderSide(
+                color: Colors.grey.shade300,
+                width: 0.6
+            )
         ),
       ),
       padding: EdgeInsets.symmetric(
-        vertical: screenHeight * 0.01,
-        horizontal: screenWidth * 0.02
+          vertical: screenHeight * 0.01,
+          horizontal: screenWidth * 0.02
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(widget.title,
             style: TextStyle(
-              fontSize: screenSize * 0.01
+                fontSize: screenSize * 0.01
             ),
           ),
           Text(widget.value,
             style: TextStyle(
-              fontSize: screenSize * 0.01
+                fontSize: screenSize * 0.01
             ),
           ),
         ],
@@ -565,4 +614,3 @@ class _TitleValueState extends State<TitleValue> {
     );
   }
 }
-

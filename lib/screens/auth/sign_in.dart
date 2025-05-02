@@ -21,6 +21,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false; // ADD THIS LINE
 
   @override
   void dispose() {
@@ -117,11 +118,15 @@ class _SignInState extends State<SignIn> {
                     ),
                     SizedBox(height: screenHeight * 0.04),
                     ElevatedButton(
-                      onPressed: () async {
+                      onPressed: _isLoading ? null : () async { // DISABLE WHEN LOADING
+                        setState(() {
+                          _isLoading = true; // SET LOADING TRUE
+                        });
                         String username = _emailController.text.trim();
                         String password = _passwordController.text.trim();
 
                         try {
+                          await Future.delayed(Duration(seconds: 1)); // ADD LOADING TIME SIMULATION
                           final status = await authUserProvider.loginUser(username, password);
 
                           if(status) {
@@ -132,6 +137,10 @@ class _SignInState extends State<SignIn> {
                         } catch (e) {
                           // Show error message if login fails
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login failed. Invalid username or password.')));
+                        } finally {
+                          setState(() {
+                            _isLoading = false; // SET LOADING FALSE
+                          });
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -144,7 +153,15 @@ class _SignInState extends State<SignIn> {
                               screenHeight * 0.06
                           )
                       ),
-                      child: Text('Log in',
+                      child: _isLoading // SHOW LOADING INDICATOR OR BUTTON CONTENT
+                          ? SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                          :Text('Log in',
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w600,

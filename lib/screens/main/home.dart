@@ -40,6 +40,65 @@ class _HomeState extends State<Home> {
       );
     }
 
+    void _showQuizListBottomSheet(BuildContext context, String categoryId) {
+      final quizProvider = Provider.of<QuizProvider>(context, listen: false);
+      List<QuizModel> categoryQuizzes = quizProvider.quizzes
+          .where((quiz) => quiz.quizCategoryId == categoryId)
+          .toList();
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext bc) {
+          return DraggableScrollableSheet(
+            initialChildSize: 0.5,
+            minChildSize: 0.3,
+            maxChildSize: 0.7,
+            builder: (BuildContext context, ScrollController scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                child: ListView(
+                  controller: scrollController,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'Quizzes in this Category',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    if (categoryQuizzes.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text('No quizzes available in this category.',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    for (var quiz in categoryQuizzes)
+                      Card(
+                        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: ListTile(
+                          leading: Icon(Icons.quiz),
+                          title: Text(quiz.name),
+                          trailing: Icon(Icons.arrow_forward_ios),
+                          onTap: () => Get.to(() => QuizPreview(quizId: quiz.id),
+                              transition: Transition.fadeIn),
+                        ),
+                      ),
+                    SizedBox(height: 20),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      );
+    }
+
     return Scaffold(
       body: Container(
         child: Column(
@@ -134,46 +193,51 @@ class _HomeState extends State<Home> {
                 itemBuilder: (context, index) {
                   final category = quizCategoryProvider.quizCategories[index];
 
-                  return Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.05),
-                              offset: Offset(0, 0),
-                              spreadRadius: 3,
-                              blurRadius: 5
+                  return InkWell(
+                    onTap: () {
+                      _showQuizListBottomSheet(context, category.id);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.05),
+                                offset: Offset(0, 0),
+                                spreadRadius: 3,
+                                blurRadius: 5
+                            )
+                          ],
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      width: screenWidth * 0.26,
+                      margin: EdgeInsets.only(
+                          left: index == 0 ? screenWidth * 0.05 : screenWidth * 0.03,
+                          right: index == quizCategoryProvider.quizCategories.length - 1 ? screenWidth * 0.05 : 0,
+                          top: screenHeight * 0.01,
+                          bottom: screenHeight * 0.01
+                      ),
+                      padding: EdgeInsets.symmetric(
+                          vertical: screenHeight * 0.02,
+                          horizontal: screenWidth * 0.02
+                      ),
+                      child: Column(
+                        children: [
+                          SvgPicture.asset('assets/svgs/categoryicons/${category.svgIcon}.svg',
+                            width: screenWidth * 0.08,
+                          ),
+                          SizedBox(height: screenHeight * 0.007),
+                          Text(category.name,
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            style: TextStyle(
+                                fontSize: screenSize * 0.01,
+                                fontWeight: FontWeight.w500
+                            ),
                           )
                         ],
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    width: screenWidth * 0.26,
-                    margin: EdgeInsets.only(
-                        left: index == 0 ? screenWidth * 0.05 : screenWidth * 0.03,
-                        right: index == quizCategoryProvider.quizCategories.length - 1 ? screenWidth * 0.05 : 0,
-                        top: screenHeight * 0.01,
-                        bottom: screenHeight * 0.01
-                    ),
-                    padding: EdgeInsets.symmetric(
-                        vertical: screenHeight * 0.02,
-                        horizontal: screenWidth * 0.02
-                    ),
-                    child: Column(
-                      children: [
-                        SvgPicture.asset('assets/svgs/categoryicons/${category.svgIcon}.svg',
-                          width: screenWidth * 0.08,
-                        ),
-                        SizedBox(height: screenHeight * 0.007),
-                        Text(category.name,
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: TextStyle(
-                              fontSize: screenSize * 0.01,
-                              fontWeight: FontWeight.w500
-                          ),
-                        )
-                      ],
+                      ),
                     ),
                   );
                 },
